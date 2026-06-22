@@ -1,0 +1,1097 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<title>WebSwan Language Studio | Quiz + Numbers + Translator</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--navy:#14395d;--navy2:#0a1e2c;--teal:#5bd1e3;--teal2:#3abcce;--teal3:#87c7e0;--gold:#f0c040;--green:#22c55e;--red:#ef4444;--white:#fff;}
+body{font-family:'DM Sans',sans-serif;background:linear-gradient(160deg,#0a1e2c 0%,#14395d 60%,#0d2e48 100%);min-height:100vh;color:var(--white);padding:20px 12px 60px}
+.hdr{text-align:center;margin-bottom:22px;padding:0 8px}
+.hdr-badge{display:inline-block;font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--teal);background:rgba(91,209,227,0.1);border:1px solid rgba(91,209,227,0.3);border-radius:20px;padding:5px 16px;margin-bottom:12px}
+.hdr h1{font-family:'Playfair Display',serif;font-size:clamp(22px,6vw,38px);font-weight:900;color:var(--white);margin-bottom:6px}
+.hdr h1 span{color:var(--teal)}
+.hdr p{font-size:13px;color:var(--teal3);max-width:420px;margin:0 auto;line-height:1.6}
+.prof-tag{display:flex;align-items:center;justify-content:center;gap:10px;margin-top:14px;background:rgba(255,255,255,0.05);border:1px solid rgba(91,209,227,0.2);border-radius:12px;padding:10px 20px;max-width:400px;margin-left:auto;margin-right:auto}
+.prof-tag .av{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--teal),var(--navy));display:flex;align-items:center;justify-content:center;font-size:18px;border:2px solid var(--teal);flex-shrink:0;background-size:cover;background-position:center;overflow:hidden}
+.prof-tag .info strong{display:block;font-size:13px;color:var(--white);font-weight:700}
+.prof-tag .info span{font-size:11px;color:var(--teal3)}
+.lang-bar{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:22px;max-width:640px;margin-left:auto;margin-right:auto}
+.lang-btn{padding:10px 22px;border-radius:30px;font-size:14px;font-weight:700;cursor:pointer;border:2px solid rgba(91,209,227,0.35);background:rgba(255,255,255,0.05);color:var(--teal3);transition:all .2s}
+.lang-btn:hover{border-color:var(--teal);color:var(--white);background:rgba(91,209,227,0.1)}
+.lang-btn.active{background:linear-gradient(135deg,var(--teal),var(--teal2));border-color:var(--teal);color:var(--navy2)}
+.mode-toggle-bar{display:flex;justify-content:center;gap:0;margin-bottom:22px;max-width:640px;margin-left:auto;margin-right:auto;background:rgba(0,0,0,0.2);border:1.5px solid rgba(91,209,227,0.25);border-radius:14px;padding:4px}
+.mode-btn{flex:1;padding:10px 6px;border-radius:11px;font-size:13px;font-weight:700;cursor:pointer;background:transparent;color:var(--teal3);transition:all .2s;display:flex;align-items:center;justify-content:center;gap:5px}
+.mode-btn:hover:not(.active){background:rgba(91,209,227,0.08);color:var(--white)}
+.mode-btn.active{background:linear-gradient(135deg,var(--teal),var(--teal2));color:var(--navy2)}
+.prog-wrap{max-width:640px;margin:0 auto 18px;padding:0 4px}
+.prog-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.prog-top .ql{font-size:13px;color:var(--teal3);font-weight:600}
+.prog-top .sl{font-size:13px;font-weight:700;color:var(--gold)}
+.prog-bg{height:6px;background:rgba(255,255,255,0.1);border-radius:10px;overflow:hidden}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--teal),var(--teal2));transition:width .4s}
+.quiz-wrap{max-width:640px;margin:0 auto}
+.q-card{background:rgba(255,255,255,0.05);border:1px solid rgba(91,209,227,0.2);border-radius:20px;padding:24px 20px}
+.q-num{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--teal);margin-bottom:8px}
+.q-english{font-size:20px;font-weight:700;font-family:'Playfair Display',serif;margin-bottom:18px;line-height:1.4}
+.options{display:flex;flex-direction:column;gap:10px;margin-bottom:16px}
+.opt-btn{display:flex;align-items:center;gap:12px;padding:13px 16px;background:rgba(255,255,255,0.06);border:1.5px solid rgba(91,209,227,0.2);border-radius:13px;cursor:pointer;text-align:left;color:var(--white);font-weight:600;width:100%}
+.opt-btn:hover:not(:disabled){background:rgba(91,209,227,0.1);border-color:var(--teal);transform:translateX(3px)}
+.opt-btn:disabled{cursor:default}
+.opt-btn.correct{background:rgba(34,197,94,0.15);border-color:var(--green)}
+.opt-btn.wrong{background:rgba(239,68,68,0.12);border-color:var(--red)}
+.opt-btn.reveal-c{background:rgba(34,197,94,0.08);border-color:rgba(34,197,94,0.5)}
+.fb-box{display:none;padding:13px 16px;border-radius:12px;margin-bottom:14px;line-height:1.5}
+.fb-box.correct{background:rgba(34,197,94,0.12);border:1px solid rgba(34,197,94,0.4);color:#86efac}
+.fb-box.wrong{background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.35);color:#fca5a5}
+.fb-note{color:rgba(255,255,255,0.7);font-size:12px;font-weight:400;margin-top:5px}
+.btn-next{width:100%;padding:13px;background:linear-gradient(135deg,var(--teal),var(--teal2));color:var(--navy2);font-weight:700;border:none;border-radius:12px;cursor:pointer;display:none}
+.btn-next.show{display:flex;align-items:center;justify-content:center;gap:8px}
+.results{max-width:640px;margin:0 auto}
+.res-card{background:rgba(255,255,255,0.05);border:1px solid rgba(91,209,227,0.25);border-radius:20px;padding:30px 20px;text-align:center;margin-bottom:14px}
+.res-emoji{font-size:50px;margin-bottom:12px}
+.res-title{font-family:'Playfair Display',serif;font-size:24px;font-weight:900;margin-bottom:8px}
+.res-score{font-size:50px;font-weight:900;color:var(--teal)}
+.res-score span{font-size:17px;color:var(--teal3);font-weight:600}
+.res-msg{font-size:13px;color:var(--teal3);margin:10px auto 20px}
+.rbtn{padding:11px 20px;font-size:13px;font-weight:700;border-radius:11px;cursor:pointer}
+.rbtn-teal{background:linear-gradient(135deg,var(--teal),var(--teal2));color:var(--navy2);border:none}
+.rbtn-outline{background:transparent;color:var(--teal);border:1.5px solid var(--teal)}
+.rbtn-teal:hover,.rbtn-outline:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(91,209,227,0.3)}
+.review-sec{max-width:640px;margin:0 auto}
+.rev-item{background:rgba(255,255,255,0.04);border:1px solid rgba(91,209,227,0.12);border-radius:13px;padding:13px 15px;margin-bottom:9px}
+.rev-item.rv-ok{border-left:4px solid var(--green)}
+.rev-item.rv-no{border-left:4px solid var(--red)}
+.add-wrap{max-width:640px;margin:18px auto 0}
+.add-toggle{width:100%;padding:12px;background:transparent;color:var(--teal3);font-size:13px;font-weight:600;border:1.5px dashed rgba(91,209,227,0.3);border-radius:12px;cursor:pointer}
+.add-panel{display:none;background:rgba(255,255,255,0.04);border-radius:14px;padding:16px;margin-top:10px}
+.add-panel.open{display:block}
+.add-field{width:100%;padding:9px 12px;background:rgba(0,0,0,0.2);border:1.5px solid rgba(91,209,227,0.22);border-radius:9px;color:#fff;margin-bottom:8px;font-family:'DM Sans',sans-serif}
+.add-field::placeholder{color:rgba(255,255,255,0.3)}
+.btn-add{padding:10px 20px;background:linear-gradient(135deg,var(--teal),var(--teal2));color:var(--navy2);font-weight:700;border:none;border-radius:9px;cursor:pointer;width:100%}
+
+/* ── DICTIONARY TRANSLATOR (tab 1) ── */
+.translator-container{max-width:640px;margin:0 auto}
+.trans-card{background:rgba(255,255,255,0.05);border:1px solid rgba(91,209,227,0.25);border-radius:16px;padding:20px}
+.lang-select-group{display:flex;gap:12px;margin-bottom:16px;align-items:center;flex-wrap:wrap}
+.lang-select-group select{flex:1;background:rgba(0,0,0,0.25);border:1.5px solid rgba(91,209,227,0.3);border-radius:9px;color:#fff;font-size:14px;padding:10px 12px;cursor:pointer}
+.swap-span{font-size:20px;color:var(--teal);font-weight:700;cursor:pointer;padding:8px 12px;background:rgba(91,209,227,0.1);border-radius:12px;transition:all .2s;flex-shrink:0}
+.swap-span:hover{background:rgba(91,209,227,0.25);transform:scale(1.05)}
+.trans-card textarea{background:rgba(0,0,0,0.25);border:1.5px solid rgba(91,209,227,0.3);border-radius:9px;color:#fff;font-size:14px;padding:12px;width:100%;font-family:'DM Sans',sans-serif;resize:vertical}
+.trans-card textarea:focus,.trans-card select:focus,.add-field:focus{outline:none;border-color:var(--teal)}
+.translate-btn-dict{width:100%;padding:12px;background:linear-gradient(135deg,var(--teal),var(--teal2));color:var(--navy2);font-weight:700;border:none;border-radius:9px;cursor:pointer;margin-top:12px;font-size:14px}
+.translate-btn-dict:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(91,209,227,0.3)}
+
+/* ── API TRANSLATOR (tab 2) — styled to match WebSwan navy theme ── */
+.api-trans-wrap{max-width:640px;margin:0 auto}
+.api-trans-card{background:rgba(255,255,255,0.05);border:1px solid rgba(91,209,227,0.25);border-radius:16px;padding:20px}
+.api-lang-row{display:flex;gap:8px;margin-bottom:16px;align-items:center;width:100%}
+.api-lang-row select{
+  flex:1;min-width:0;padding:10px 28px 10px 10px;
+  border:1.5px solid rgba(91,209,227,0.3);border-radius:9px;
+  font-size:14px;color:#fff;background:rgba(0,0,0,0.25);cursor:pointer;
+  -webkit-appearance:none;appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%235bd1e3' d='M6 8L0 0h12z'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 10px center;
+}
+.api-lang-row select:focus{outline:none;border-color:var(--teal)}
+.api-lang-row select option{background:#14395d;color:#fff}
+.api-swap-btn{background:rgba(91,209,227,0.15);color:var(--teal);border:1.5px solid rgba(91,209,227,0.4);width:40px;height:40px;min-width:40px;border-radius:50%;font-size:16px;cursor:pointer;flex-shrink:0;transition:all .2s}
+.api-swap-btn:hover{background:rgba(91,209,227,0.3)}
+.api-input-wrap{margin-bottom:14px;position:relative}
+.api-input-wrap label{display:block;margin-bottom:6px;color:var(--teal);font-weight:700;font-size:12px;letter-spacing:.5px;text-transform:uppercase}
+.api-textarea{width:100%;min-height:110px;padding:14px;border:1.5px solid rgba(91,209,227,0.3);border-radius:10px;font-size:15px;resize:vertical;background:rgba(0,0,0,0.2);color:#fff;font-family:'DM Sans',sans-serif;-webkit-appearance:none}
+.api-textarea:focus{outline:none;border-color:var(--teal)}
+.api-textarea::placeholder{color:rgba(255,255,255,0.3)}
+.api-char-count{position:absolute;bottom:10px;right:12px;font-size:11px;color:rgba(255,255,255,0.4)}
+.api-translate-btn{width:100%;padding:13px;background:linear-gradient(135deg,var(--teal),var(--teal2));color:var(--navy2);border:none;border-radius:10px;font-size:15px;font-weight:700;margin-bottom:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;-webkit-tap-highlight-color:transparent}
+.api-translate-btn:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(91,209,227,0.3)}
+.api-translate-btn:active{transform:scale(.98)}
+.api-translate-btn:disabled{background:rgba(91,209,227,0.3);cursor:default}
+.api-spinner{width:18px;height:18px;border:3px solid rgba(20,57,93,.4);border-top-color:var(--navy2);border-radius:50%;animation:spin .7s linear infinite;display:none}
+.api-translate-btn.loading .api-spinner{display:block}
+.api-translate-btn.loading .api-btn-label{display:none}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
+.api-result-box{background:rgba(0,0,0,0.2);border:1.5px solid rgba(91,209,227,0.2);padding:16px;border-radius:12px;min-height:100px;margin-bottom:14px}
+.api-result-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px}
+.api-result-header h3{color:var(--teal);font-size:11px;text-transform:uppercase;letter-spacing:1px;font-weight:700}
+.api-result-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.api-copy-btn{background:rgba(91,209,227,0.15);color:var(--teal);border:1.5px solid rgba(91,209,227,0.4);padding:7px 14px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;-webkit-tap-highlight-color:transparent;white-space:nowrap}
+.api-copy-btn:hover{background:rgba(91,209,227,0.3)}
+.api-copy-btn:disabled{opacity:.4;cursor:default}
+.api-speak-btn{background:rgba(26,47,94,0.6);color:#fff;border:1.5px solid rgba(91,209,227,0.2);padding:7px 14px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:5px;-webkit-tap-highlight-color:transparent;white-space:nowrap}
+.api-speak-btn:hover{background:rgba(26,47,94,0.9)}
+.api-speak-btn:disabled{opacity:.4;cursor:default}
+.api-speak-btn.speaking{background:#e53935;animation:pulse .8s infinite}
+#apiResultText{color:#fff;font-size:15px;line-height:1.65;min-height:60px;word-break:break-word}
+.api-placeholder{color:rgba(255,255,255,0.35);font-style:italic}
+.api-error{color:#fca5a5;font-size:13px;line-height:1.5}
+.api-offline-banner{display:none;text-align:center;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:600;margin-bottom:14px;background:rgba(255,152,0,0.2);color:#ffcc80;border:1px solid rgba(255,152,0,0.3)}
+.api-offline-banner.show{display:block}
+.api-cached-banner{display:none;text-align:center;padding:8px 14px;border-radius:8px;font-size:12px;font-weight:600;margin-bottom:10px;background:rgba(34,197,94,0.12);color:#86efac;border:1px solid rgba(34,197,94,0.3)}
+.api-cached-banner.show{display:block}
+.api-saved-section{margin-top:4px}
+.api-saved-section h4{color:var(--teal);font-size:11px;text-transform:uppercase;letter-spacing:.6px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;font-weight:700}
+.api-clear-btn{background:none;border:1px solid rgba(239,68,68,0.5);color:#fca5a5;padding:3px 10px;border-radius:12px;font-size:11px;cursor:pointer}
+.api-clear-btn:hover{background:rgba(239,68,68,0.1)}
+.api-saved-item{background:rgba(255,255,255,0.04);border:1px solid rgba(91,209,227,0.15);border-radius:8px;padding:10px 12px;margin-bottom:8px;cursor:pointer;font-size:13px;transition:border-color .15s;overflow:hidden}
+.api-saved-item:active{border-color:var(--teal)}
+.api-saved-item .src{color:var(--teal3);font-size:11px;margin-bottom:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.api-saved-item .tgt{color:#fff;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.api-no-saved{color:rgba(255,255,255,0.3);font-size:13px;font-style:italic}
+.trans-sub-toggle{display:flex;gap:0;margin-bottom:16px;max-width:640px;margin-left:auto;margin-right:auto;background:rgba(0,0,0,0.15);border:1px solid rgba(91,209,227,0.2);border-radius:10px;padding:3px}
+.trans-sub-btn{flex:1;padding:8px 10px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;background:transparent;color:var(--teal3);border:none;transition:all .2s}
+.trans-sub-btn.active{background:linear-gradient(135deg,var(--teal),var(--teal2));color:var(--navy2)}
+
+.hidden{display:none!important}
+.divider{height:1px;background:linear-gradient(90deg,transparent,rgba(91,209,227,0.3),transparent);margin:22px 0}
+.footer-note{text-align:center;font-size:11px;color:rgba(91,209,227,0.4)}
+
+/* ── ADD YOUR OWN LESSON (footer) ── */
+.lesson-section{max-width:640px;margin:28px auto 0;padding:0 4px}
+.lesson-header{display:flex;align-items:center;gap:10px;cursor:pointer;padding:14px 18px;background:rgba(255,255,255,0.04);border:1.5px dashed rgba(91,209,227,0.35);border-radius:14px;transition:all .2s;user-select:none}
+.lesson-header:hover{border-color:var(--teal);background:rgba(91,209,227,0.06)}
+.lesson-header-icon{font-size:20px}
+.lesson-header-text{flex:1}
+.lesson-header-text strong{display:block;font-size:14px;font-weight:700;color:var(--white)}
+.lesson-header-text span{font-size:11px;color:var(--teal3)}
+.lesson-chevron{font-size:16px;color:var(--teal);transition:transform .25s}
+.lesson-chevron.open{transform:rotate(180deg)}
+.lesson-panel{display:none;background:rgba(255,255,255,0.04);border:1px solid rgba(91,209,227,0.2);border-top:none;border-radius:0 0 14px 14px;padding:18px 16px 20px}
+.lesson-panel.open{display:block}
+.lesson-lang-row{display:flex;align-items:center;gap:8px;margin-bottom:14px;background:rgba(0,0,0,0.15);border-radius:9px;padding:10px 12px}
+.lesson-lang-row label{font-size:12px;color:var(--teal);font-weight:700;white-space:nowrap}
+.lesson-lang-select{flex:1;background:rgba(0,0,0,0.25);border:1.5px solid rgba(91,209,227,0.3);border-radius:7px;color:#fff;font-size:13px;padding:7px 10px;cursor:pointer}
+.lesson-lang-select:focus{outline:none;border-color:var(--teal)}
+.lesson-lang-select option{background:#14395d}
+.lesson-fields{display:flex;flex-direction:column;gap:10px;margin-bottom:14px}
+.lesson-field-wrap{position:relative}
+.lesson-field-label{font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--teal);margin-bottom:5px;display:block}
+.lesson-field{width:100%;padding:11px 14px;background:rgba(0,0,0,0.2);border:1.5px solid rgba(91,209,227,0.22);border-radius:9px;color:#fff;font-family:'DM Sans',sans-serif;font-size:14px}
+.lesson-field::placeholder{color:rgba(255,255,255,0.3)}
+.lesson-field:focus{outline:none;border-color:var(--teal)}
+.lesson-note-field{resize:vertical;min-height:60px}
+.lesson-btn-row{display:flex;gap:10px}
+.lesson-save-btn{flex:1;padding:12px;background:linear-gradient(135deg,var(--teal),var(--teal2));color:var(--navy2);font-weight:700;border:none;border-radius:9px;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;gap:6px}
+.lesson-save-btn:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(91,209,227,0.3)}
+.lesson-save-btn:disabled{background:rgba(91,209,227,0.3);cursor:default;transform:none;box-shadow:none}
+.lesson-saved-list{margin-top:16px}
+.lesson-saved-title{font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--teal);margin-bottom:10px;display:flex;justify-content:space-between;align-items:center}
+.lesson-clear-btn{background:none;border:1px solid rgba(239,68,68,0.5);color:#fca5a5;padding:3px 10px;border-radius:10px;font-size:11px;cursor:pointer}
+.lesson-clear-btn:hover{background:rgba(239,68,68,0.1)}
+.lesson-item{background:rgba(255,255,255,0.04);border:1px solid rgba(91,209,227,0.15);border-radius:10px;padding:11px 13px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.lesson-item:hover{border-color:rgba(91,209,227,0.35)}
+.lesson-item-text{flex:1;min-width:0}
+.lesson-item-en{font-size:13px;font-weight:700;color:var(--white);margin-bottom:3px}
+.lesson-item-trans{font-size:13px;color:var(--teal3)}
+.lesson-item-flag{font-size:11px;color:rgba(255,255,255,0.4);margin-top:3px}
+.lesson-item-del{background:none;border:none;color:rgba(239,68,68,0.5);cursor:pointer;font-size:15px;padding:2px 6px;border-radius:6px;flex-shrink:0;transition:color .15s}
+.lesson-item-del:hover{color:#ef4444}
+.lesson-empty{color:rgba(255,255,255,0.3);font-size:13px;font-style:italic;text-align:center;padding:10px 0}
+.lesson-success{display:none;background:rgba(34,197,94,0.12);border:1px solid rgba(34,197,94,0.35);color:#86efac;border-radius:9px;padding:10px 14px;font-size:13px;font-weight:600;margin-bottom:12px;text-align:center}
+.lesson-success.show{display:block}
+
+/* ── SCREEN LOCK ── */
+#lockScreen{position:fixed;inset:0;z-index:9999;background:linear-gradient(160deg,#0a1e2c 0%,#14395d 60%,#0d2e48 100%);display:flex;align-items:center;justify-content:center;flex-direction:column}
+#lockScreen.hidden{display:none}
+.lock-icon{font-size:54px;cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent;filter:drop-shadow(0 0 14px rgba(91,209,227,0.25));transition:transform .15s}
+.lock-icon:active{transform:scale(0.88)}
+.lock-pass-wrap{display:none;flex-direction:column;align-items:center;gap:12px;margin-top:26px;animation:lockFadeIn .25s ease}
+.lock-pass-wrap.show{display:flex}
+@keyframes lockFadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.lock-pass-wrap input{width:180px;text-align:center;letter-spacing:6px;font-size:20px;padding:12px 14px;background:rgba(0,0,0,0.25);border:1.5px solid rgba(91,209,227,0.3);border-radius:10px;color:#fff;font-family:'DM Sans',sans-serif}
+.lock-pass-wrap input:focus{outline:none;border-color:var(--teal)}
+.lock-pass-wrap input::placeholder{color:rgba(255,255,255,0.25);letter-spacing:2px}
+.lock-err{font-size:12px;color:var(--red);min-height:16px;opacity:0;transition:opacity .2s}
+.lock-err.show{opacity:1}
+</style>
+</head>
+<body>
+
+<div id="lockScreen">
+  <div class="lock-icon" id="lockIcon">🔐</div>
+  <div class="lock-pass-wrap" id="lockPassWrap">
+    <input type="password" id="lockPassInput" inputmode="numeric" maxlength="6" autocomplete="off">
+    <div class="lock-err" id="lockErr">Incorrect password</div>
+  </div>
+</div>
+
+<div class="hdr">
+  <div class="hdr-badge" id="hdrBadge">🇧🇷 Português Brasileiro</div>
+  <h1>WebSwan <span>Language</span> Studio</h1>
+  <p>Authentic phrases + Numbers 1–100 + AI Translator • 10 questions per round</p>
+  <div class="prof-tag">
+    <div class="av" style="background-image:url(data:image/jpeg;base64,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)"></div>
+    <div class="info"><strong>Professora Tânia</strong><span>Native · Brazilian Portuguese · Cuban Spanish · Italian</span></div>
+  </div>
+</div>
+
+<div class="lang-bar">
+  <button class="lang-btn active" data-lang="pt">🇧🇷 Brazilian Portuguese</button>
+  <button class="lang-btn" data-lang="es">🇨🇺 Cuban Spanish</button>
+  <button class="lang-btn" data-lang="it">🇮🇹 Italian</button>
+</div>
+
+<div class="mode-toggle-bar">
+  <button class="mode-btn active" id="modeQuizBtn">📝 Quiz</button>
+  <button class="mode-btn" id="modeDictBtn">📖 Dictionary</button>
+  <button class="mode-btn" id="modeApiBtn">🌐 AI Translator</button>
+</div>
+
+<!-- ══════════════ QUIZ SECTIONS ══════════════ -->
+<div id="quizSections">
+  <div class="prog-wrap hidden" id="progWrap">
+    <div class="prog-top"><span class="ql" id="qLabel">Question 1 of 10</span><span class="sl" id="scoreLive">✓ 0 ✗ 0</span></div>
+    <div class="prog-bg"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+  </div>
+  <div class="quiz-wrap hidden" id="quizWrap">
+    <div class="q-card">
+      <div class="q-num" id="qNum">Question 01</div>
+      <div class="q-english" id="qEnglish">Loading...</div>
+      <div class="options" id="optsWrap"></div>
+      <div class="fb-box" id="fbBox"></div>
+      <button class="btn-next" id="btnNext">Next →</button>
+    </div>
+  </div>
+  <div class="results hidden" id="resultsWrap">
+    <div class="res-card">
+      <div class="res-emoji" id="resEmoji">🎉</div>
+      <div class="res-title" id="resTitle">Well done!</div>
+      <div class="res-score" id="resScore">0<span>/10</span></div>
+      <div class="res-msg" id="resMsg"></div>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
+        <button class="rbtn rbtn-outline" id="reviewBtn">📖 Review Quiz</button>
+        <button class="rbtn rbtn-teal" id="moreQuestionsBtn">✨ More Questions</button>
+        <button class="rbtn rbtn-outline" id="retakeBtn">🔄 Retake</button>
+      </div>
+    </div>
+  </div>
+  <div class="review-sec hidden" id="reviewWrap">
+    <div style="font-weight:700;text-align:center;margin-bottom:14px">📘 Quiz Review</div>
+    <div id="reviewList"></div>
+    <div style="display:flex;gap:10px;justify-content:center;margin-top:14px">
+      <button class="rbtn rbtn-outline" id="backToResultsBtn">← Back</button>
+      <button class="rbtn rbtn-teal" id="moreFromReviewBtn">More Questions</button>
+    </div>
+  </div>
+  <div class="add-wrap hidden" id="addWrap">
+    <button class="add-toggle" id="addToggleBtn">➕ Add your own question</button>
+    <div class="add-panel" id="addPanel">
+      <input class="add-field" id="newEn" placeholder="English phrase or number">
+      <input class="add-field" id="newCorrect" placeholder="Correct answer">
+      <input class="add-field" id="newW1" placeholder="Wrong option 1">
+      <input class="add-field" id="newW2" placeholder="Wrong option 2">
+      <input class="add-field" id="newNote" placeholder="Professor's note (optional)">
+      <button class="btn-add" id="addQBtn">➕ Add to current language</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ DICTIONARY TRANSLATOR ══════════════ -->
+<div id="dictSection" class="hidden">
+  <div class="translator-container">
+    <div class="trans-card">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px">
+        <span>📖</span>
+        <span style="font-weight:700;color:var(--teal);font-size:15px">Dictionary Translator</span>
+        <span style="font-size:11px;color:var(--teal3);margin-left:4px">65+ phrases · Numbers 1–100 · Offline</span>
+      </div>
+      <div class="lang-select-group">
+        <select id="fromLangDict">
+          <option value="en">🇺🇸 English</option>
+          <option value="pt">🇧🇷 Portuguese</option>
+          <option value="es">🇨🇺 Spanish</option>
+          <option value="it">🇮🇹 Italian</option>
+          <option value="fr">🇫🇷 French</option>
+        </select>
+        <span class="swap-span" id="swapDictBtn" title="Swap languages">⇄</span>
+        <select id="toLangDict">
+          <option value="pt">🇧🇷 Portuguese</option>
+          <option value="es">🇨🇺 Spanish</option>
+          <option value="it">🇮🇹 Italian</option>
+          <option value="fr">🇫🇷 French</option>
+          <option value="en">🇺🇸 English</option>
+        </select>
+      </div>
+      <textarea id="dictSourceText" rows="3" placeholder="Type a word, phrase, or number (1–100)…"></textarea>
+      <button class="translate-btn-dict" id="dictTranslateBtn">✨ Translate</button>
+      <div id="dictResult" style="display:none;margin-top:14px;padding:14px;background:rgba(91,209,227,0.08);border-radius:12px;border:1px solid rgba(91,209,227,0.2)">
+        <div style="font-size:11px;color:var(--teal);font-weight:700;text-transform:uppercase;letter-spacing:1px">Translation</div>
+        <div id="dictResultText" style="font-size:20px;font-weight:700;margin:8px 0;color:var(--white)"></div>
+        <div id="dictResultNote" style="font-size:12px;color:var(--teal3);margin-top:8px;padding-top:8px;border-top:1px solid rgba(91,209,227,0.2)"></div>
+      </div>
+      <div id="dictLoading" style="display:none;text-align:center;margin-top:14px;padding:10px;color:var(--teal3);font-weight:600">⏳ Translating...</div>
+      <div id="dictError" style="display:none;margin-top:10px;padding:10px;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);border-radius:8px;color:#fca5a5;font-size:13px"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ API (AI) TRANSLATOR ══════════════ -->
+<div id="apiSection" class="hidden">
+  <div class="api-trans-wrap">
+    <div class="api-trans-card">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px">
+        <span>🌐</span>
+        <span style="font-weight:700;color:var(--teal);font-size:15px">AI Translator</span>
+        <span style="font-size:11px;color:var(--teal3);margin-left:4px">21 languages · Live API · Speak & Copy</span>
+      </div>
+
+      <div class="api-offline-banner" id="apiOfflineBanner">📵 You're offline — tap a saved translation below</div>
+      <div class="api-cached-banner" id="apiCachedBanner">✅ Loaded from your saved translations</div>
+
+      <div class="api-lang-row">
+        <select id="apiFromLang">
+          <option value="English">English 🇺🇸</option>
+          <option value="Brazilian Portuguese">Brazilian Portuguese 🇧🇷</option>
+          <option value="European Portuguese">Portuguese (European) 🇵🇹</option>
+          <option value="Haitian Creole">Haitian Creole 🇭🇹</option>
+          <option value="Spanish">Spanish 🇪🇸</option>
+          <option value="Dominican Spanish">Dominican Spanish 🇩🇴</option>
+          <option value="French">French 🇫🇷</option>
+          <option value="German">German 🇩🇪</option>
+          <option value="Italian">Italian 🇮🇹</option>
+          <option value="Russian">Russian 🇷🇺</option>
+          <option value="Japanese">Japanese 🇯🇵</option>
+          <option value="Korean">Korean 🇰🇷</option>
+          <option value="Chinese Simplified">Chinese (Simplified) 🇨🇳</option>
+          <option value="Arabic">Arabic 🇸🇦</option>
+          <option value="Hindi">Hindi 🇮🇳</option>
+          <option value="Turkish">Turkish 🇹🇷</option>
+          <option value="Polish">Polish 🇵🇱</option>
+          <option value="Dutch">Dutch 🇳🇱</option>
+          <option value="Vietnamese">Vietnamese 🇻🇳</option>
+          <option value="Thai">Thai 🇹🇭</option>
+          <option value="Indonesian">Indonesian 🇮🇩</option>
+        </select>
+        <button class="api-swap-btn" id="apiSwapBtn" title="Swap languages">⇄</button>
+        <select id="apiToLang">
+          <option value="Brazilian Portuguese">Brazilian Portuguese 🇧🇷</option>
+          <option value="English">English 🇺🇸</option>
+          <option value="European Portuguese">Portuguese (European) 🇵🇹</option>
+          <option value="Haitian Creole">Haitian Creole 🇭🇹</option>
+          <option value="Spanish">Spanish 🇪🇸</option>
+          <option value="Dominican Spanish">Dominican Spanish 🇩🇴</option>
+          <option value="French">French 🇫🇷</option>
+          <option value="German">German 🇩🇪</option>
+          <option value="Italian">Italian 🇮🇹</option>
+          <option value="Russian">Russian 🇷🇺</option>
+          <option value="Japanese">Japanese 🇯🇵</option>
+          <option value="Korean">Korean 🇰🇷</option>
+          <option value="Chinese Simplified">Chinese (Simplified) 🇨🇳</option>
+          <option value="Arabic">Arabic 🇸🇦</option>
+          <option value="Hindi">Hindi 🇮🇳</option>
+          <option value="Turkish">Turkish 🇹🇷</option>
+          <option value="Polish">Polish 🇵🇱</option>
+          <option value="Dutch">Dutch 🇳🇱</option>
+          <option value="Vietnamese">Vietnamese 🇻🇳</option>
+          <option value="Thai">Thai 🇹🇭</option>
+          <option value="Indonesian">Indonesian 🇮🇩</option>
+        </select>
+      </div>
+
+      <div class="api-input-wrap">
+        <label>Text to translate</label>
+        <textarea class="api-textarea" id="apiInputText" placeholder="Type here… (Ctrl+Enter to translate)" maxlength="500"></textarea>
+        <span class="api-char-count" id="apiCharCount">0 / 500</span>
+      </div>
+
+      <button class="api-translate-btn" id="apiTranslateBtn">
+        <div class="api-spinner"></div>
+        <span class="api-btn-label">🌐 Translate Now</span>
+      </button>
+
+      <div class="api-result-box">
+        <div class="api-result-header">
+          <h3>Translation</h3>
+          <div class="api-result-actions">
+            <button class="api-speak-btn" id="apiSpeakBtn" disabled>🔊 Listen</button>
+            <button class="api-copy-btn" id="apiCopyBtn" disabled>Copy</button>
+          </div>
+        </div>
+        <div id="apiResultText"><span class="api-placeholder">Translation will appear here…</span></div>
+      </div>
+
+      <div class="api-saved-section">
+        <h4>
+          💾 Saved Translations (offline ready)
+          <button class="api-clear-btn" id="apiClearBtn">Clear all</button>
+        </h4>
+        <div id="apiSavedList"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ══════════════ ADD YOUR OWN LESSON (FOOTER) ══════════════ -->
+<div class="lesson-section" id="myLessonsSection">
+  <div class="lesson-header" id="lessonToggleBtn">
+    <span class="lesson-header-icon">✏️</span>
+    <div class="lesson-header-text">
+      <strong>Add Your Own Lesson</strong>
+      <span>Type a sentence in English + its translation — saved permanently to your app</span>
+    </div>
+    <span class="lesson-chevron" id="lessonChevron">▼</span>
+  </div>
+  <div class="lesson-panel" id="lessonPanel">
+    <div class="lesson-success" id="lessonSuccess">✅ Lesson saved! It also added to the quiz pool.</div>
+    <div class="lesson-lang-row">
+      <label>Translate to:</label>
+      <select class="lesson-lang-select" id="lessonLangSelect">
+        <option value="pt">🇧🇷 Brazilian Portuguese</option>
+        <option value="es">🇨🇺 Cuban Spanish</option>
+        <option value="it">🇮🇹 Italian</option>
+        <option value="fr">🇫🇷 French</option>
+      </select>
+    </div>
+    <div class="lesson-fields">
+      <div class="lesson-field-wrap">
+        <label class="lesson-field-label">🇺🇸 English sentence</label>
+        <input class="lesson-field" id="lessonEnInput" type="text" placeholder="e.g. The beach is beautiful">
+      </div>
+      <div class="lesson-field-wrap">
+        <label class="lesson-field-label" id="lessonTransLabel">🇧🇷 Brazilian Portuguese translation</label>
+        <input class="lesson-field" id="lessonTransInput" type="text" placeholder="e.g. A praia é linda">
+      </div>
+      <div class="lesson-field-wrap">
+        <label class="lesson-field-label">💡 Professor's note (optional)</label>
+        <textarea class="lesson-field lesson-note-field" id="lessonNoteInput" placeholder="Any tip, context, or grammar note…"></textarea>
+      </div>
+    </div>
+    <div class="lesson-btn-row">
+      <button class="lesson-save-btn" id="lessonSaveBtn">💾 Save Lesson</button>
+    </div>
+    <div class="lesson-saved-list" id="lessonSavedList"></div>
+  </div>
+</div>
+
+<div class="divider"></div>
+<div class="footer-note">WebSwan Language Lessons · Authentic speech · Numbers 1–100 · AI-powered translations</div>
+
+<script>
+'use strict';
+
+// ======================== NUMBERS 1-100 ========================
+const NUMBERS = {
+  pt:{1:"um",2:"dois",3:"três",4:"quatro",5:"cinco",6:"seis",7:"sete",8:"oito",9:"nove",10:"dez",11:"onze",12:"doze",13:"treze",14:"catorze",15:"quinze",16:"dezesseis",17:"dezessete",18:"dezoito",19:"dezenove",20:"vinte",21:"vinte e um",22:"vinte e dois",23:"vinte e três",24:"vinte e quatro",25:"vinte e cinco",26:"vinte e seis",27:"vinte e sete",28:"vinte e oito",29:"vinte e nove",30:"trinta",31:"trinta e um",32:"trinta e dois",33:"trinta e três",34:"trinta e quatro",35:"trinta e cinco",36:"trinta e seis",37:"trinta e sete",38:"trinta e oito",39:"trinta e nove",40:"quarenta",41:"quarenta e um",42:"quarenta e dois",43:"quarenta e três",44:"quarenta e quatro",45:"quarenta e cinco",46:"quarenta e seis",47:"quarenta e sete",48:"quarenta e oito",49:"quarenta e nove",50:"cinquenta",51:"cinquenta e um",52:"cinquenta e dois",53:"cinquenta e três",54:"cinquenta e quatro",55:"cinquenta e cinco",56:"cinquenta e seis",57:"cinquenta e sete",58:"cinquenta e oito",59:"cinquenta e nove",60:"sessenta",61:"sessenta e um",62:"sessenta e dois",63:"sessenta e três",64:"sessenta e quatro",65:"sessenta e cinco",66:"sessenta e seis",67:"sessenta e sete",68:"sessenta e oito",69:"sessenta e nove",70:"setenta",71:"setenta e um",72:"setenta e dois",73:"setenta e três",74:"setenta e quatro",75:"setenta e cinco",76:"setenta e seis",77:"setenta e sete",78:"setenta e oito",79:"setenta e nove",80:"oitenta",81:"oitenta e um",82:"oitenta e dois",83:"oitenta e três",84:"oitenta e quatro",85:"oitenta e cinco",86:"oitenta e seis",87:"oitenta e sete",88:"oitenta e oito",89:"oitenta e nove",90:"noventa",91:"noventa e um",92:"noventa e dois",93:"noventa e três",94:"noventa e quatro",95:"noventa e cinco",96:"noventa e seis",97:"noventa e sete",98:"noventa e oito",99:"noventa e nove",100:"cem"},
+  es:{1:"uno",2:"dos",3:"tres",4:"cuatro",5:"cinco",6:"seis",7:"siete",8:"ocho",9:"nueve",10:"diez",11:"once",12:"doce",13:"trece",14:"catorce",15:"quince",16:"dieciséis",17:"diecisiete",18:"dieciocho",19:"diecinueve",20:"veinte",21:"veintiuno",22:"veintidós",23:"veintitrés",24:"veinticuatro",25:"veinticinco",26:"veintiséis",27:"veintisiete",28:"veintiocho",29:"veintinueve",30:"treinta",31:"treinta y uno",32:"treinta y dos",33:"treinta y tres",34:"treinta y cuatro",35:"treinta y cinco",36:"treinta y seis",37:"treinta y siete",38:"treinta y ocho",39:"treinta y nueve",40:"cuarenta",41:"cuarenta y uno",42:"cuarenta y dos",43:"cuarenta y tres",44:"cuarenta y cuatro",45:"cuarenta y cinco",46:"cuarenta y seis",47:"cuarenta y siete",48:"cuarenta y ocho",49:"cuarenta y nueve",50:"cincuenta",51:"cincuenta y uno",52:"cincuenta y dos",53:"cincuenta y tres",54:"cincuenta y cuatro",55:"cincuenta y cinco",56:"cincuenta y seis",57:"cincuenta y siete",58:"cincuenta y ocho",59:"cincuenta y nueve",60:"sesenta",61:"sesenta y uno",62:"sesenta y dos",63:"sesenta y tres",64:"sesenta y cuatro",65:"sesenta y cinco",66:"sesenta y seis",67:"sesenta y siete",68:"sesenta y ocho",69:"sesenta y nueve",70:"setenta",71:"setenta y uno",72:"setenta y dos",73:"setenta y tres",74:"setenta y cuatro",75:"setenta y cinco",76:"setenta y seis",77:"setenta y siete",78:"setenta y ocho",79:"setenta y nueve",80:"ochenta",81:"ochenta y uno",82:"ochenta y dos",83:"ochenta y tres",84:"ochenta y cuatro",85:"ochenta y cinco",86:"ochenta y seis",87:"ochenta y siete",88:"ochenta y ocho",89:"ochenta y nueve",90:"noventa",91:"noventa y uno",92:"noventa y dos",93:"noventa y tres",94:"noventa y cuatro",95:"noventa y cinco",96:"noventa y seis",97:"noventa y siete",98:"noventa y ocho",99:"noventa y nueve",100:"cien"},
+  it:{1:"uno",2:"due",3:"tre",4:"quattro",5:"cinque",6:"sei",7:"sette",8:"otto",9:"nove",10:"dieci",11:"undici",12:"dodici",13:"tredici",14:"quattordici",15:"quindici",16:"sedici",17:"diciassette",18:"diciotto",19:"diciannove",20:"venti",21:"ventuno",22:"ventidue",23:"ventitré",24:"ventiquattro",25:"venticinque",26:"ventisei",27:"ventisette",28:"ventotto",29:"ventinove",30:"trenta",31:"trentuno",32:"trentadue",33:"trentatré",34:"trentaquattro",35:"trentacinque",36:"trentasei",37:"trentasette",38:"trentotto",39:"trentanove",40:"quaranta",41:"quarantuno",42:"quarantadue",43:"quarantatré",44:"quarantaquattro",45:"quarantacinque",46:"quarantasei",47:"quarantasette",48:"quarantotto",49:"quarantanove",50:"cinquanta",51:"cinquantuno",52:"cinquantadue",53:"cinquantatré",54:"cinquantaquattro",55:"cinquantacinque",56:"cinquantasei",57:"cinquantasette",58:"cinquantotto",59:"cinquantanove",60:"sessanta",61:"sessantuno",62:"sessantadue",63:"sessantatré",64:"sessantaquattro",65:"sessantacinque",66:"sessantasei",67:"sessantasette",68:"sessantotto",69:"sessantanove",70:"settanta",71:"settantuno",72:"settantadue",73:"settantatré",74:"settantaquattro",75:"settantacinque",76:"settantasei",77:"settantasette",78:"settantotto",79:"settantanove",80:"ottanta",81:"ottantuno",82:"ottantadue",83:"ottantatré",84:"ottantaquattro",85:"ottantacinque",86:"ottantasei",87:"ottantasette",88:"ottantotto",89:"ottantanove",90:"novanta",91:"novantuno",92:"novantadue",93:"novantatré",94:"novantaquattro",95:"novantacinque",96:"novantasei",97:"novantasette",98:"novantotto",99:"novantanove",100:"cento"},
+  fr:{1:"un",2:"deux",3:"trois",4:"quatre",5:"cinq",6:"six",7:"sept",8:"huit",9:"neuf",10:"dix",11:"onze",12:"douze",13:"treize",14:"quatorze",15:"quinze",16:"seize",17:"dix-sept",18:"dix-huit",19:"dix-neuf",20:"vingt",21:"vingt et un",22:"vingt-deux",23:"vingt-trois",24:"vingt-quatre",25:"vingt-cinq",26:"vingt-six",27:"vingt-sept",28:"vingt-huit",29:"vingt-neuf",30:"trente",31:"trente et un",32:"trente-deux",33:"trente-trois",34:"trente-quatre",35:"trente-cinq",36:"trente-six",37:"trente-sept",38:"trente-huit",39:"trente-neuf",40:"quarante",41:"quarante et un",42:"quarante-deux",43:"quarante-trois",44:"quarante-quatre",45:"quarante-cinq",46:"quarante-six",47:"quarante-sept",48:"quarante-huit",49:"quarante-neuf",50:"cinquante",51:"cinquante et un",52:"cinquante-deux",53:"cinquante-trois",54:"cinquante-quatre",55:"cinquante-cinq",56:"cinquante-six",57:"cinquante-sept",58:"cinquante-huit",59:"cinquante-neuf",60:"soixante",61:"soixante et un",62:"soixante-deux",63:"soixante-trois",64:"soixante-quatre",65:"soixante-cinq",66:"soixante-six",67:"soixante-sept",68:"soixante-huit",69:"soixante-neuf",70:"soixante-dix",71:"soixante et onze",72:"soixante-douze",73:"soixante-treize",74:"soixante-quatorze",75:"soixante-quinze",76:"soixante-seize",77:"soixante-dix-sept",78:"soixante-dix-huit",79:"soixante-dix-neuf",80:"quatre-vingts",81:"quatre-vingt-un",82:"quatre-vingt-deux",83:"quatre-vingt-trois",84:"quatre-vingt-quatre",85:"quatre-vingt-cinq",86:"quatre-vingt-six",87:"quatre-vingt-sept",88:"quatre-vingt-huit",89:"quatre-vingt-neuf",90:"quatre-vingt-dix",91:"quatre-vingt-onze",92:"quatre-vingt-douze",93:"quatre-vingt-treize",94:"quatre-vingt-quatorze",95:"quatre-vingt-quinze",96:"quatre-vingt-seize",97:"quatre-vingt-dix-sept",98:"quatre-vingt-dix-huit",99:"quatre-vingt-dix-neuf",100:"cent"}
+};
+
+// ======================== PHRASE DICTIONARY ========================
+const DICT = {
+  "hello":{en:"Hello",pt:"Olá",es:"Hola",it:"Ciao",fr:"Bonjour",note:"Most common greeting."},
+  "hi":{en:"Hi",pt:"Oi",es:"Hola",it:"Ciao",fr:"Salut",note:"Informal hi."},
+  "good morning":{en:"Good morning",pt:"Bom dia",es:"Buenos días",it:"Buongiorno",fr:"Bonjour",note:"Used until noon."},
+  "good afternoon":{en:"Good afternoon",pt:"Boa tarde",es:"Buenas tardes",it:"Buon pomeriggio",fr:"Bon après-midi"},
+  "good evening":{en:"Good evening",pt:"Boa noite",es:"Buenas noches",it:"Buona sera",fr:"Bonsoir"},
+  "good night":{en:"Good night",pt:"Boa noite",es:"Buenas noches",it:"Buonanotte",fr:"Bonne nuit",note:"When going to sleep."},
+  "goodbye":{en:"Goodbye",pt:"Tchau",es:"Adiós",it:"Arrivederci",fr:"Au revoir"},
+  "bye":{en:"Bye",pt:"Tchau",es:"Chao",it:"Ciao",fr:"Salut"},
+  "see you later":{en:"See you later",pt:"Até logo",es:"Hasta luego",it:"A dopo",fr:"À tout à l'heure"},
+  "see you tomorrow":{en:"See you tomorrow",pt:"Até amanhã",es:"Hasta mañana",it:"A domani",fr:"À demain"},
+  "welcome":{en:"Welcome",pt:"Bem-vindo",es:"Bienvenido",it:"Benvenuto",fr:"Bienvenue"},
+  "how are you":{en:"How are you?",pt:"Como você está?",es:"¿Cómo estás?",it:"Come stai?",fr:"Comment ça va?",note:"Standard check-in."},
+  "i am fine":{en:"I am fine",pt:"Estou bem",es:"Estoy bien",it:"Sto bene",fr:"Je vais bien"},
+  "i am happy":{en:"I am happy",pt:"Estou feliz",es:"Estoy feliz",it:"Sono felice",fr:"Je suis heureux"},
+  "i am sad":{en:"I am sad",pt:"Estou triste",es:"Estoy triste",it:"Sono triste",fr:"Je suis triste"},
+  "i am tired":{en:"I am tired",pt:"Estou cansado",es:"Estoy cansado",it:"Sono stanco",fr:"Je suis fatigué"},
+  "i am hungry":{en:"I am hungry",pt:"Estou com fome",es:"Tengo hambre",it:"Ho fame",fr:"J'ai faim",note:"PT literally 'I am with hunger'."},
+  "i am thirsty":{en:"I am thirsty",pt:"Estou com sede",es:"Tengo sed",it:"Ho sete",fr:"J'ai soif"},
+  "i am sick":{en:"I am sick",pt:"Estou doente",es:"Estoy enfermo",it:"Sono malato",fr:"Je suis malade"},
+  "i am cold":{en:"I am cold",pt:"Estou com frio",es:"Tengo frío",it:"Ho freddo",fr:"J'ai froid"},
+  "i am hot":{en:"I am hot",pt:"Estou com calor",es:"Tengo calor",it:"Ho caldo",fr:"J'ai chaud"},
+  "i am lost":{en:"I am lost",pt:"Estou perdido",es:"Estoy perdido",it:"Mi sono perso",fr:"Je suis perdu"},
+  "i miss you":{en:"I miss you",pt:"Estou com saudade de você",es:"Te extraño",it:"Mi manchi",fr:"Tu me manques",note:"PT 'saudade' is uniquely Brazilian!"},
+  "i love you":{en:"I love you",pt:"Eu te amo",es:"Te quiero",it:"Ti amo",fr:"Je t'aime",note:"Romantic love."},
+  "i like you":{en:"I like you",pt:"Eu gosto de você",es:"Me gustas",it:"Mi piaci",fr:"Je t'aime bien"},
+  "you are beautiful":{en:"You are beautiful",pt:"Você é linda",es:"Eres hermosa",it:"Sei bellissima",fr:"Tu es belle"},
+  "my friend":{en:"My friend",pt:"Meu amigo",es:"Mi amigo",it:"Il mio amico",fr:"Mon ami"},
+  "thank you":{en:"Thank you",pt:"Obrigado",es:"Gracias",it:"Grazie",fr:"Merci",note:"PT: men say obrigado, women obrigada."},
+  "thank you very much":{en:"Thank you very much",pt:"Muito obrigado",es:"Muchas gracias",it:"Grazie mille",fr:"Merci beaucoup"},
+  "you are welcome":{en:"You're welcome",pt:"De nada",es:"De nada",it:"Prego",fr:"De rien"},
+  "please":{en:"Please",pt:"Por favor",es:"Por favor",it:"Per favore",fr:"S'il vous plaît"},
+  "sorry":{en:"Sorry",pt:"Desculpe",es:"Lo siento",it:"Mi dispiace",fr:"Désolé"},
+  "excuse me":{en:"Excuse me",pt:"Com licença",es:"Perdón",it:"Scusi",fr:"Excusez-moi"},
+  "yes":{en:"Yes",pt:"Sim",es:"Sí",it:"Sì",fr:"Oui"},
+  "no":{en:"No",pt:"Não",es:"No",it:"No",fr:"Non"},
+  "maybe":{en:"Maybe",pt:"Talvez",es:"Tal vez",it:"Forse",fr:"Peut-être"},
+  "of course":{en:"Of course",pt:"Claro",es:"Claro",it:"Certo",fr:"Bien sûr"},
+  "ok":{en:"OK",pt:"Ok",es:"Ok",it:"Ok",fr:"D'accord"},
+  "no problem":{en:"No problem",pt:"Sem problema",es:"Sin problema",it:"Nessun problema",fr:"Pas de problème"},
+  "what is your name":{en:"What is your name?",pt:"Qual é o seu nome?",es:"¿Cómo te llamas?",it:"Come ti chiami?",fr:"Comment tu t'appelles?"},
+  "my name is":{en:"My name is...",pt:"Meu nome é...",es:"Me llamo...",it:"Mi chiamo...",fr:"Je m'appelle..."},
+  "where are you from":{en:"Where are you from?",pt:"De onde você é?",es:"¿De dónde eres?",it:"Di dove sei?",fr:"D'où tu viens?"},
+  "how old are you":{en:"How old are you?",pt:"Quantos anos você tem?",es:"¿Cuántos años tienes?",it:"Quanti anni hai?",fr:"Quel âge as-tu?",note:"All use 'to have' for age."},
+  "do you speak english":{en:"Do you speak English?",pt:"Você fala inglês?",es:"¿Hablas inglés?",it:"Parli inglese?",fr:"Tu parles anglais?"},
+  "i don't understand":{en:"I don't understand",pt:"Não entendo",es:"No entiendo",it:"Non capisco",fr:"Je ne comprends pas"},
+  "can you repeat that":{en:"Can you repeat that?",pt:"Pode repetir?",es:"¿Puedes repetirlo?",it:"Puoi ripetere?",fr:"Peux-tu répéter?"},
+  "where are you":{en:"Where are you?",pt:"Onde você está?",es:"¿Dónde estás?",it:"Dove sei?",fr:"Où es-tu?"},
+  "where is the bathroom":{en:"Where is the bathroom?",pt:"Onde fica o banheiro?",es:"¿Dónde está el baño?",it:"Dov'è il bagno?",fr:"Où sont les toilettes?",note:"Essential travel phrase!"},
+  "where is the hotel":{en:"Where is the hotel?",pt:"Onde fica o hotel?",es:"¿Dónde está el hotel?",it:"Dov'è l'hotel?",fr:"Où est l'hôtel?"},
+  "turn left":{en:"Turn left",pt:"Vire à esquerda",es:"Gira a la izquierda",it:"Gira a sinistra",fr:"Tournez à gauche"},
+  "turn right":{en:"Turn right",pt:"Vire à direita",es:"Gira a la derecha",it:"Gira a destra",fr:"Tournez à droite"},
+  "straight ahead":{en:"Straight ahead",pt:"Em frente",es:"Todo recto",it:"Dritto",fr:"Tout droit"},
+  "help":{en:"Help!",pt:"Socorro!",es:"¡Ayuda!",it:"Aiuto!",fr:"Au secours!",note:"Emergency phrase."},
+  "call the police":{en:"Call the police!",pt:"Chame a polícia!",es:"¡Llame a la policía!",it:"Chiama la polizia!",fr:"Appelez la police!"},
+  "did you call me":{en:"Did you call me?",pt:"Você me ligou?",es:"¿Me llamaste?",it:"Mi hai chiamato?",fr:"Tu m'as appelé(e)?",note:"PT uses 'ligar' for phone calls; ES/IT/FR use llamar/chiamare/appeler for both naming AND phoning."},
+  "i need a doctor":{en:"I need a doctor",pt:"Preciso de um médico",es:"Necesito un médico",it:"Ho bisogno di un medico",fr:"J'ai besoin d'un médecin"},
+  "delicious":{en:"Delicious",pt:"Delicioso / Gostoso",es:"Delicioso",it:"Delizioso",fr:"Délicieux"},
+  "i want water":{en:"I want water",pt:"Quero água",es:"Quiero agua",it:"Voglio acqua",fr:"Je veux de l'eau"},
+  "i want coffee":{en:"I want coffee",pt:"Quero café",es:"Quiero café",it:"Voglio un caffè",fr:"Je veux un café"},
+  "the check please":{en:"The check, please",pt:"A conta, por favor",es:"La cuenta, por favor",it:"Il conto, per favore",fr:"L'addition, s'il vous plaît"},
+  "a table for two":{en:"A table for two",pt:"Uma mesa para dois",es:"Una mesa para dos",it:"Un tavolo per due",fr:"Une table pour deux"},
+  "i am vegetarian":{en:"I am vegetarian",pt:"Sou vegetariano",es:"Soy vegetariano",it:"Sono vegetariano",fr:"Je suis végétarien"},
+  "what time is it":{en:"What time is it?",pt:"Que horas são?",es:"¿Qué hora es?",it:"Che ore sono?",fr:"Quelle heure est-il?"},
+  "today":{en:"Today",pt:"Hoje",es:"Hoy",it:"Oggi",fr:"Aujourd'hui"},
+  "tomorrow":{en:"Tomorrow",pt:"Amanhã",es:"Mañana",it:"Domani",fr:"Demain"},
+  "yesterday":{en:"Yesterday",pt:"Ontem",es:"Ayer",it:"Ieri",fr:"Hier"},
+  "now":{en:"Now",pt:"Agora",es:"Ahora",it:"Adesso",fr:"Maintenant"},
+  "later":{en:"Later",pt:"Depois",es:"Después",it:"Dopo",fr:"Plus tard"},
+  "i need a taxi":{en:"I need a taxi",pt:"Preciso de um táxi",es:"Necesito un taxi",it:"Ho bisogno di un taxi",fr:"J'ai besoin d'un taxi"},
+  "where is the airport":{en:"Where is the airport?",pt:"Onde fica o aeroporto?",es:"¿Dónde está el aeropuerto?",it:"Dov'è l'aeroporto?",fr:"Où est l'aéroport?"},
+  "i have a reservation":{en:"I have a reservation",pt:"Tenho uma reserva",es:"Tengo una reserva",it:"Ho una prenotazione",fr:"J'ai une réservation"},
+  "do you have wifi":{en:"Do you have WiFi?",pt:"Tem Wi-Fi?",es:"¿Tienes WiFi?",it:"Avete il WiFi?",fr:"Vous avez le WiFi?"},
+  "beautiful":{en:"Beautiful",pt:"Lindo / Linda",es:"Hermoso / Hermosa",it:"Bello / Bella",fr:"Beau / Belle"},
+  "good":{en:"Good",pt:"Bom / Boa",es:"Bueno / Buena",it:"Buono / Buona",fr:"Bon / Bonne"},
+  "bad":{en:"Bad",pt:"Ruim",es:"Malo",it:"Cattivo",fr:"Mauvais"},
+  "expensive":{en:"Expensive",pt:"Caro",es:"Caro",it:"Caro",fr:"Cher"},
+  "free":{en:"Free",pt:"Grátis",es:"Gratis",it:"Gratuito",fr:"Gratuit"},
+  "open":{en:"Open",pt:"Aberto",es:"Abierto",it:"Aperto",fr:"Ouvert"},
+  "closed":{en:"Closed",pt:"Fechado",es:"Cerrado",it:"Chiuso",fr:"Fermé"},
+  "i want":{en:"I want...",pt:"Eu quero...",es:"Quiero...",it:"Voglio...",fr:"Je veux..."},
+  "i need":{en:"I need...",pt:"Eu preciso...",es:"Necesito...",it:"Ho bisogno di...",fr:"J'ai besoin de..."},
+  "let's go":{en:"Let's go!",pt:"Vamos!",es:"¡Vamos!",it:"Andiamo!",fr:"Allons-y!"},
+  "wait":{en:"Wait",pt:"Espera",es:"Espera",it:"Aspetta",fr:"Attends"},
+  "stop":{en:"Stop",pt:"Para",es:"Para",it:"Fermati",fr:"Arrête"},
+  "how much does it cost":{en:"How much does it cost?",pt:"Quanto custa?",es:"¿Cuánto cuesta?",it:"Quanto costa?",fr:"Combien ça coûte?"},
+  "do you walk around here":{en:"Do you walk around here because it is near this?",pt:"Você anda por aqui porque é perto daqui?",es:"¿Tú andas por aquí porque está cerca?",it:"Giri da queste parti perché è vicino?",fr:"Tu te promènes par ici parce que c'est près?",note:"PT: 'perto daqui' = near here. ES: 'cerca' alone, no extra preposition. IT: 'da queste parti' = around here (very natural)."},
+  "do you want to go out tonight":{en:"Do you want to go out tonight?",pt:"Você quer sair hoje à noite?",es:"¿Quieres salir esta noche?",it:"Vuoi uscire stasera?",fr:"Tu veux sortir ce soir?",note:"PT: 'hoje à noite' = tonight. ES: 'esta noche'. IT: 'stasera' one word, most natural."},
+  "does he want to leave this":{en:"Does he want to leave this?",pt:"Ele quer sair disso?",es:"¿Él quiere salir de esto?",it:"Lui vuole andarsene da questo?",fr:"Il veut partir de ça?",note:"PT: 'disso' = de+isso. ES: 'salir de' = leave a situation. IT: 'andarsene da' = get away from."},
+  "i see this and she sees this too":{en:"I see this, and she sees this too.",pt:"Eu vejo isso, e ela vê isso também.",es:"Yo veo esto, y ella también lo ve.",it:"Io vedo questo, e anche lei lo vede.",fr:"Je vois ça, et elle le voit aussi.",note:"PT: 'vejo' vs 'vê' — verb conjugates! ES/IT: object pronoun 'lo' replaces the noun before the verb."},
+  "what is this does he like this":{en:"What is this? Does he like this?",pt:"O que é isso? Ele gosta disso?",es:"¿Qué es esto? ¿A él le gusta esto?",it:"Cos'è questo? A lui piace questo?",fr:"C'est quoi ça? Il aime ça?",note:"PT: 'gostar' needs 'de' → 'disso'. ES: 'gustar' needs 'le' → 'a él le gusta'. IT: 'piacere' needs 'a' → 'a lui piace'."}
+};
+
+const LANG_NAMES={en:"English",pt:"Portuguese (BR)",es:"Spanish (Cuban)",it:"Italian",fr:"French"};
+const LANG_FLAGS={en:"🇺🇸",pt:"🇧🇷",es:"🇨🇺",it:"🇮🇹",fr:"🇫🇷"};
+
+function normStr(s){return s.toLowerCase().trim().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[?!¿¡.]/g,"").replace(/\s+/g," ");}
+
+function doDictTranslate(raw,from,to){
+  if(from===to) return {text:raw,note:"Same language — no translation needed."};
+  const n=normStr(raw);
+  // digit number?
+  const num=parseInt(n);
+  if(!isNaN(num)&&String(num)===n&&num>=1&&num<=100){
+    if(NUMBERS[to]&&NUMBERS[to][num]) return{text:NUMBERS[to][num],note:`🔢 Number ${num} in ${LANG_NAMES[to]}`};
+    if(from!=='en'&&NUMBERS[from]&&NUMBERS[from][num]) return{text:NUMBERS[from][num],note:`🔢 Number ${num} in ${LANG_NAMES[from]}`};
+  }
+  // dictionary match by key (from=en)
+  if(from==='en'){
+    for(const[k,v] of Object.entries(DICT)){if(normStr(k)===n&&v[to]) return{text:v[to],note:v.note||''};}
+    for(const[k,v] of Object.entries(DICT)){if(n.includes(normStr(k))&&v[to]) return{text:v[to],note:v.note||''};}
+  }
+  // match by source-lang field
+  for(const[k,v] of Object.entries(DICT)){
+    const sv=v[from]; if(!sv) continue;
+    if(normStr(sv)===n||n.includes(normStr(sv))){
+      const tv=v[to]||(to==='en'?v.en:null);
+      if(tv) return{text:tv,note:v.note||''};
+    }
+  }
+  // reverse number words
+  for(const[num2,word] of Object.entries(NUMBERS[from]||{})){
+    if(normStr(word)===n){
+      const i=parseInt(num2);
+      if(to==='en') return{text:String(i),note:`🔢 Number ${i}`};
+      if(NUMBERS[to]&&NUMBERS[to][i]) return{text:NUMBERS[to][i],note:`🔢 Number ${i} in ${LANG_NAMES[to]}`};
+    }
+  }
+  return null;
+}
+
+// ======================== QUIZ BANKS ========================
+const BANKS={
+  pt:[
+    {en:"My name is Tânia.",correct:"Meu nome é Tânia.",wrong:["Me chamo de Tânia.","Eu sou Tânia."],note:"'Meu nome é...' is natural."},
+    {en:"How old are you?",correct:"Quantos anos você tem?",wrong:["Qual é a sua idade?","Quanto tempo você tem?"],note:"Brazilians use 'ter' for age."},
+    {en:"I'm hungry.",correct:"Estou com fome.",wrong:["Eu quero comer.","Tenho fome."],note:"'Estou com fome' — literally 'I am with hunger.'"},
+    {en:"I miss you.",correct:"Estou com saudade de você.",wrong:["Sinto sua falta.","Você me faz falta."],note:"'Saudade' is uniquely Brazilian!"},
+    {en:"I love you.",correct:"Eu te amo.",wrong:["Te quero muito.","Gosto muito de você."],note:"'Eu te amo' for romantic love."},
+    {en:"Where are you?",correct:"Onde você está?",wrong:["Cadê você?","Onde é que você tá?"],note:"'Onde você está?' is standard Brazilian Portuguese."},
+    {en:"Good morning!",correct:"Bom dia!",wrong:["Boa tarde.","Olá!"],note:"'Bom dia' until noon."},
+    {en:"Thank you!",correct:"Obrigado!",wrong:["Valeu.","Grato."],note:"Men say 'obrigado', women say 'obrigada'."},
+    {en:"How are you?",correct:"Como você está?",wrong:["Tudo bem?","E aí?"],note:"'Tudo bem?' is also very common."},
+    {en:"Where is the bathroom?",correct:"Onde fica o banheiro?",wrong:["Onde está o banheiro?","Cadê o banheiro?"],note:"'Onde fica' for fixed places."},
+    {en:"Do you walk around here because it is near this?",correct:"Você anda por aqui porque é perto daqui?",wrong:["Você caminha aqui porque está perto?","Você passa por aqui porque é próximo?"],note:"'Perto daqui' = near here. 'Por aqui' = around here."},
+    {en:"Do you want to go out tonight?",correct:"Você quer sair hoje à noite?",wrong:["Você quer ir sair esta noite?","Você quer sair agora à noite?"],note:"'Sair' = to go out. 'Hoje à noite' = tonight (literally 'today at night')."},
+    {en:"Does he want to leave this?",correct:"Ele quer sair disso?",wrong:["Ele quer deixar isso?","Ele quer ir embora disso?"],note:"'Sair de' = to leave something. 'Disso' = de + isso (of/from this)."},
+    {en:"I see this, and she sees this too.",correct:"Eu vejo isso, e ela vê isso também.",wrong:["Eu vejo isso, e ela vejo isso também.","Eu vejo isso, e ela vê isso tambem."],note:"'Vejo' (I see) → 'vê' (she sees). Verb changes! 'Também' = too/also."},
+    {en:"What is this? Does he like this?",correct:"O que é isso? Ele gosta disso?",wrong:["O que é isso? Ele gosta isso?","O que é isso? Ele gosta de isso?"],note:"'Gostar' always needs 'de'. 'Disso' = de + isso. Never 'gosta isso'!"},
+    {en:"What do you call this?",correct:"Como você chama isso?",wrong:["Como você liga isso?","Como você contesta isso?"],note:"'Chamar' = to call/name something. 'Ligar' is only for phone calls, not naming objects."},
+    {en:"Which verb do you use to phone someone?",correct:"Ligar",wrong:["Chamar","Atender"],note:"'Ligar' is THE verb for making a phone call in Brazilian Portuguese."},
+    {en:"I called him yesterday.",correct:"Eu liguei para ele ontem.",wrong:["Eu ligou para ele ontem.","Eu ligar para ele ontem."],note:"'Liguei' = I called (past tense of 'ligar', eu form)."},
+    {en:"Call me tomorrow!",correct:"Me liga amanhã.",wrong:["Me chama amanhã.","Me atende amanhã."],note:"For phone calls, always 'ligar' — 'me liga' = call me."},
+    {en:"I called you, but you didn't answer.",correct:"Eu te liguei, mas você não atendeu.",wrong:["Eu te chamei, mas você não ligou.","Eu te liguei, mas você não contestou."],note:"'Ligar' to call, 'atender' to answer — don't mix them up!"},
+    {en:"Which verb do you use to get a waiter's attention?",correct:"Chamar",wrong:["Ligar","Contestar"],note:"'Chamar' = to call/summon a person, like calling a waiter over."},
+    {en:"How do you correctly spell the verb for summoning/naming?",correct:"Chamar",wrong:["Charmar","Chamarr"],note:"'Chamar' — one 'r', no 'h' after the 'c'."},
+    {en:"What is the correct verb for 'to answer' a call?",correct:"Atender",wrong:["Ligar","Responder"],note:"'Atender o telefone' = to answer the phone. 'Responder' is more for answering questions."},
+    {en:"Call me right away!",correct:"Me liga logo!",wrong:["Me chama logo!","Me atende logo!"],note:"'Logo' = right away/soon. Still uses 'ligar' since it's a phone call."},
+    {en:"\"Como você chama isso no Rio?\" — what does this mean?",correct:"How do you call this in Rio?",wrong:["Do you call this in Rio?","Why do you call this in Rio?"],note:"'Como' here means 'how' — asking for the local word/name for something."},
+    {en:"Which word means \"tomorrow\"?",correct:"Amanhã",wrong:["Agora","Ontem"],note:"'Amanhã' = tomorrow. 'Agora' = now, 'Ontem' = yesterday."},
+    {en:"Which word means \"yesterday\"?",correct:"Ontem",wrong:["Amanhã","Agora"],note:"'Ontem' = yesterday. Don't confuse with 'Amanhã' (tomorrow)."},
+    {en:"In the sentence \"Me liga!\", what does \"Me\" represent?",correct:"To me / me",wrong:["I","You"],note:"'Me' is the object pronoun — 'Me liga!' = 'Call me!' (literally 'to me call')."},
+    {en:"I am going to call you.",correct:"Vou te ligar.",wrong:["Vou me ligar.","Ligar te."],note:"'Vou te ligar' = I'm going to call you. 'Te' = you (object pronoun) goes before the infinitive."},
+    {en:"\"Como é que chama isso?\" — what are they asking?",correct:"What is this called?",wrong:["Who called this?","Can you call this?"],note:"This is a very natural, colloquial way to ask for the name of something."},
+    {en:"When calling a taxi, what is the best phrase?",correct:"Chamar o táxi.",wrong:["Ligar o táxi.","Atender o táxi."],note:"You 'chamar' (summon) a taxi — you don't 'ligar' (phone) a vehicle itself."},
+    {en:"What does \"Atendeu\" mean in the context of a phone call?",correct:"Answered",wrong:["Called","Missed"],note:"'Atendeu' = answered (past tense of 'atender')."},
+    {en:"Who called you?",correct:"Quem te ligou?",wrong:["Quem te chamou?","Quem te atendeu?"],note:"'Ligou' = called (phone). 'Chamou' would mean who summoned/named you instead."},
+    {en:"If you are not answering, what is the best way to say it?",correct:"Não atendi.",wrong:["Não liguei.","Não chamei."],note:"'Não atendi' = I didn't answer (the phone). 'Não liguei' would mean 'I didn't call'."}
+  ],
+  es:[
+    {en:"My name is Tania.",correct:"Me llamo Tania.",wrong:["Mi nombre es Tania.","Yo soy Tania."],note:"'Me llamo' is most natural."},
+    {en:"How old are you?",correct:"¿Cuántos años tienes?",wrong:["¿Cuál es tu edad?","¿Cuánto tiempo tienes?"],note:"Spanish uses 'tener' for age."},
+    {en:"I'm hungry.",correct:"Tengo hambre.",wrong:["Estoy hambriento.","Quiero comer."],note:"'Tener hambre' — classic Spanish."},
+    {en:"I miss you.",correct:"Te extraño.",wrong:["Me haces falta.","Tengo nostalgia."],note:"'Te extraño' is dominant."},
+    {en:"I love you.",correct:"Te quiero.",wrong:["Te amo.","Me gustas mucho."],note:"'Te quiero' is used broadly."},
+    {en:"Where are you?",correct:"¿Dónde estás?",wrong:["¿Dónde andas?","¿En dónde estás?"],note:"'¿Dónde estás?' is standard Cuban Spanish."},
+    {en:"Good morning!",correct:"¡Buenos días!",wrong:["Buen día.","¡Hola!"],note:"Standard greeting."},
+    {en:"Thank you!",correct:"Gracias.",wrong:["Graciela.","Muchas gracias."],note:"Short and sweet!"},
+    {en:"How are you?",correct:"¿Cómo estás?",wrong:["¿Qué tal?","¿Cómo va?"],note:"'¿Qué bolá?' is Cuban slang."},
+    {en:"Do you walk around here because it is near this?",correct:"¿Tú andas por aquí porque está cerca?",wrong:["¿Caminas por aquí porque es cerca de esto?","¿Pasas por aquí porque está próximo?"],note:"'Cerca' = near. 'Andar por aquí' = to walk around here. No 'de esto' needed — just 'cerca'."},
+    {en:"Do you want to go out tonight?",correct:"¿Quieres salir esta noche?",wrong:["¿Tú quieres salir hoy en la noche?","¿Quieres ir afuera esta noche?"],note:"'Salir' = to go out. 'Esta noche' = tonight. Natural and direct — no subject pronoun needed."},
+    {en:"Does he want to leave this?",correct:"¿Él quiere salir de esto?",wrong:["¿Él quiere dejar esto?","¿Él quiere irse de esto?"],note:"'Salir de' = to leave/get out of something. Don't drop the 'de' — 'salir esto' is wrong."},
+    {en:"I see this, and she sees this too.",correct:"Yo veo esto, y ella también lo ve.",wrong:["Yo veo esto, y ella ve esto también.","Yo veo esto, y ella también ve esto."],note:"In Spanish the object pronoun 'lo' replaces 'esto' before the verb. Most natural: 'también lo ve'."},
+    {en:"What is this? Does he like this?",correct:"¿Qué es esto? ¿A él le gusta esto?",wrong:["¿Qué es esto? ¿Él gusta esto?","¿Qué es esto? ¿Él le gusta esto?"],note:"'Gustar' needs 'le' (indirect object). 'A él le gusta' — the 'a él' is optional but clarifying."},
+    {en:"What do you call this?",correct:"¿Cómo se llama esto?",wrong:["¿Cómo se marca esto?",  "¿Cómo se contesta esto?"],note:"'Llamar' = to call/name something. 'Marcar' is for dialing a number, not naming objects."},
+    {en:"Which verb do you use to phone someone?",correct:"Llamar",wrong:["Marcar","Contestar"],note:"'Llamar' is THE verb for making a phone call in Spanish — 'llamar por teléfono'."},
+    {en:"I called him yesterday.",correct:"Lo llamé ayer.",wrong:["Lo llamó ayer.","Lo llamar ayer."],note:"'Llamé' = I called (past tense of 'llamar', yo form)."},
+    {en:"Call me tomorrow!",correct:"Llámame mañana.",wrong:["Me llamas mañana.","Contéstame mañana."],note:"'Llámame' = call me — the command form of 'llamar' with the pronoun attached."},
+    {en:"I called you, but you didn't answer.",correct:"Te llamé, pero no contestaste.",wrong:["Te llamé, pero no llamaste.","Te llamé, pero no respondiste el teléfono."],note:"'Llamar' to call, 'contestar' to answer — don't mix them up!"},
+    {en:"Which verb do you use to get a waiter's attention?",correct:"Llamar",wrong:["Marcar","Contestar"],note:"'Llamar al camarero' = to call/wave over the waiter."},
+    {en:"How do you correctly spell the verb for calling/naming?",correct:"Llamar",wrong:["Yamar","Llammar"],note:"'Llamar' — double 'l' (which sounds like 'y' in Cuban Spanish), one 'm'."},
+    {en:"What is the correct verb for 'to answer' a call?",correct:"Contestar",wrong:["Llamar","Responder"],note:"'Contestar el teléfono' = to answer the phone. 'Responder' is more for answering questions."},
+    {en:"Call me right away!",correct:"¡Llámame ahora mismo!",wrong:["¡Contéstame ahora mismo!","¡Marca ahora mismo!"],note:"'Ahora mismo' = right away/right now. Still uses 'llamar' since it's a phone call."},
+    {en:"\"¿Cómo se llama esto en Cuba?\" — what does this mean?",correct:"How do you call this in Cuba?",wrong:["Do you call this in Cuba?","Why do you call this in Cuba?"],note:"'Cómo' here means 'how' — asking for the local word/name for something."},
+    {en:"Which word means \"tomorrow\"?",correct:"Mañana",wrong:["Ahora","Ayer"],note:"'Mañana' = tomorrow. 'Ahora' = now, 'Ayer' = yesterday."},
+    {en:"Which word means \"yesterday\"?",correct:"Ayer",wrong:["Mañana","Ahora"],note:"'Ayer' = yesterday. Don't confuse with 'Mañana' (tomorrow)."},
+    {en:"In the sentence \"¡Llámame!\", what does \"me\" represent?",correct:"To me / me",wrong:["I","You"],note:"'Me' is the object pronoun attached to the command — 'Llámame!' = 'Call me!'"},
+    {en:"I am going to call you.",correct:"Te voy a llamar.",wrong:["Me voy a llamar.","Llamar te voy."],note:"'Te voy a llamar' = I'm going to call you. 'Te' = you (object pronoun) goes before the conjugated verb."},
+    {en:"\"¿Cómo se llama esto?\" — what are they asking?",correct:"What is this called?",wrong:["Who called this?","Can you call this?"],note:"This is a natural, everyday way to ask for the name of something."},
+    {en:"When calling a taxi, what is the best phrase?",correct:"Llamar un taxi.",wrong:["Marcar un taxi.","Contestar un taxi."],note:"You 'llamar' (call/summon) a taxi — 'marcar' is for dialing a phone number, not a vehicle."},
+    {en:"What does \"Contestó\" mean in the context of a phone call?",correct:"Answered",wrong:["Called","Missed"],note:"'Contestó' = answered (past tense of 'contestar')."},
+    {en:"Who called you?",correct:"¿Quién te llamó?",wrong:["¿Quién te contestó?","¿Quién te marcó?"],note:"'Llamó' = called. 'Contestó' would mean who answered you instead."},
+    {en:"If you are not answering, what is the best way to say it?",correct:"No contesté.",wrong:["No llamé.","No marqué."],note:"'No contesté' = I didn't answer (the phone). 'No llamé' would mean 'I didn't call'."}
+  ],
+  it:[
+    {en:"My name is Tania.",correct:"Mi chiamo Tania.",wrong:["Il mio nome è Tania.","Io sono Tania."],note:"'Mi chiamo' is standard."},
+    {en:"How old are you?",correct:"Quanti anni hai?",wrong:["Qual è la tua età?","Quanto tempo hai?"],note:"'Avere' for age."},
+    {en:"I'm hungry.",correct:"Ho fame.",wrong:["Sono affamato.","Voglio mangiare."],note:"'Ho fame' — 'I have hunger.'"},
+    {en:"I miss you.",correct:"Mi manchi.",wrong:["Ti manco.","Ho nostalgia di te."],note:"'Mi manchi' works backwards."},
+    {en:"I love you.",correct:"Ti amo.",wrong:["Ti voglio bene.","Mi piaci."],note:"'Ti amo' for romantic love."},
+    {en:"Where are you?",correct:"Dove sei?",wrong:["Dove ti trovi?","Dove stai?"],note:"'Dove sei?' is standard Italian."},
+    {en:"Good morning!",correct:"Buongiorno!",wrong:["Buon dì.","Ciao!"],note:"Standard greeting."},
+    {en:"Thank you!",correct:"Grazie.",wrong:["Grazie mille.","Ti ringrazio."],note:"Simple and elegant."},
+    {en:"How are you?",correct:"Come stai?",wrong:["Come va?","Che dici?"],note:"Informal singular."},
+    {en:"Do you walk around here because it is near this?",correct:"Giri da queste parti perché è vicino?",wrong:["Cammini qui perché è vicino a questo?","Passi per qui perché è vicino?"],note:"'Da queste parti' = around here (very natural Italian). 'Vicino' = near. No 'a questo' needed."},
+    {en:"Do you want to go out tonight?",correct:"Vuoi uscire stasera?",wrong:["Vuoi andare fuori stanotte?","Tu vuoi uscire questa sera?"],note:"'Uscire' = to go out. 'Stasera' = tonight (one word, very natural). 'Stanotte' means 'tonight' but implies nighttime/sleep."},
+    {en:"Does he want to leave this?",correct:"Lui vuole andarsene da questo?",wrong:["Lui vuole lasciare questo?","Lui vuole uscire da questo?"],note:"'Andarsene' = to leave/get away from. 'Lasciare' means to leave behind an object, not a situation."},
+    {en:"I see this, and she sees this too.",correct:"Io vedo questo, e anche lei lo vede.",wrong:["Io vedo questo, e lei vede questo anche.","Io vedo questo, e lei anche lo vede."],note:"'Anche lei lo vede' — 'anche' (also/too) comes before the subject. 'Lo' replaces 'questo' before the verb."},
+    {en:"What is this? Does he like this?",correct:"Cos'è questo? A lui piace questo?",wrong:["Cosa è questo? Lui piace questo?","Che cos'è questo? Lui lo piace?"],note:"'Piacere' works like 'gustar' — 'a lui piace' (to him it pleases). Never 'lui piace qualcosa' without 'a'."},
+    {en:"What do you call this?",correct:"Come si chiama questo?",wrong:["Come si telefona questo?","Come si risponde questo?"],note:"'Chiamare' = to call/name something AND to phone — it covers both meanings in Italian!"},
+    {en:"Which verb do you use to phone someone?",correct:"Chiamare",wrong:["Telefonare","Rispondere"],note:"Both 'chiamare' and 'telefonare' work, but 'chiamare' is the most common everyday choice."},
+    {en:"I called him yesterday.",correct:"L'ho chiamato ieri.",wrong:["L'ha chiamato ieri.","L'ho chiamare ieri."],note:"'Ho chiamato' = I called (passato composto of 'chiamare', io form)."},
+    {en:"Call me tomorrow!",correct:"Chiamami domani.",wrong:["Mi chiami domani.","Rispondimi domani."],note:"'Chiamami' = call me — the imperative form of 'chiamare' with the pronoun attached."},
+    {en:"I called you, but you didn't answer.",correct:"Ti ho chiamato, ma non hai risposto.",wrong:["Ti ho chiamato, ma non hai chiamato.","Ti ho chiamato, ma non hai telefonato."],note:"'Chiamare' to call, 'rispondere' to answer — don't mix them up!"},
+    {en:"Which verb do you use to get a waiter's attention?",correct:"Chiamare",wrong:["Telefonare","Rispondere"],note:"'Chiamare il cameriere' = to call over the waiter."},
+    {en:"How do you correctly spell the verb for calling/naming?",correct:"Chiamare",wrong:["Chiammare","Chiamarre"],note:"'Chiamare' — one 'm', ends in '-are' like a regular first-conjugation verb."},
+    {en:"What is the correct verb for 'to answer' a call?",correct:"Rispondere",wrong:["Chiamare","Telefonare"],note:"'Rispondere al telefono' = to answer the phone."},
+    {en:"Call me right away!",correct:"Chiamami subito!",wrong:["Rispondimi subito!","Telefonami subito!"],note:"'Subito' = right away. Still uses 'chiamare' since it's a phone call (or naming)."},
+    {en:"\"Come si chiama questo a Napoli?\" — what does this mean?",correct:"How do you call this in Naples?",wrong:["Do you call this in Naples?","Why do you call this in Naples?"],note:"'Come' here means 'how' — asking for the local word/name for something."},
+    {en:"Which word means \"tomorrow\"?",correct:"Domani",wrong:["Adesso","Ieri"],note:"'Domani' = tomorrow. 'Adesso' = now, 'Ieri' = yesterday."},
+    {en:"Which word means \"yesterday\"?",correct:"Ieri",wrong:["Domani","Adesso"],note:"'Ieri' = yesterday. Don't confuse with 'Domani' (tomorrow)."},
+    {en:"In the word \"Chiamami!\", what does \"mi\" represent?",correct:"Me",wrong:["I","You"],note:"'Mi' is the object pronoun attached to the imperative — 'Chiamami!' = 'Call me!'"},
+    {en:"I am going to call you.",correct:"Ti chiamerò.",wrong:["Mi chiamerai.","Chiamare ti."],note:"'Ti chiamerò' = I will call you (future tense). 'Ti' = you (object pronoun) attaches before the verb."},
+    {en:"\"Come si chiama questo?\" — what are they asking?",correct:"What is this called?",wrong:["Who called this?","Can you call this?"],note:"This is a natural, everyday way to ask for the name of something."},
+    {en:"When calling a taxi, what is the best phrase?",correct:"Chiamare un taxi.",wrong:["Telefonare un taxi.","Rispondere un taxi."],note:"You 'chiamare' (call/summon) a taxi — you don't phone the vehicle itself."},
+    {en:"What does \"Ha risposto\" mean in the context of a phone call?",correct:"Answered",wrong:["Called","Missed"],note:"'Ha risposto' = answered (passato composto of 'rispondere')."},
+    {en:"Who called you?",correct:"Chi ti ha chiamato?",wrong:["Chi ti ha risposto?","Chi ti ha telefonato?"],note:"'Chiamato' = called. 'Risposto' would mean who answered you instead."},
+    {en:"If you are not answering, what is the best way to say it?",correct:"Non ho risposto.",wrong:["Non ho chiamato.","Non ho telefonato."],note:"'Non ho risposto' = I didn't answer (the phone). 'Non ho chiamato' would mean 'I didn't call'."}
+  ]
+};
+function generateNumberQuestions(lang){
+  const nums=[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,25,30,40,50,60,70,80,90,100];
+  const name=lang==='pt'?'Portuguese':lang==='es'?'Spanish':'Italian';
+  return nums.map(num=>{
+    const correct=NUMBERS[lang][num];
+    const ws=new Set();
+    while(ws.size<2){const n=Math.floor(Math.random()*100)+1;if(n!==num)ws.add(NUMBERS[lang][n]);}
+    return{en:`${num}`,correct,wrong:Array.from(ws),note:`Number ${num} in ${name} is "${correct}". 🔢`};
+  });
+}
+['pt','es','it'].forEach(l=>{BANKS[l]=[...BANKS[l],...generateNumberQuestions(l)];});
+
+// ======================== QUIZ ENGINE ========================
+function shuffle(a){let b=a.slice();for(let i=b.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;}
+let currentLang='pt',masterQ=shuffle([...BANKS.pt]),roundQ=[];
+let cIdx=0,score=0,wrongCt=0,answered=false,history=[];
+let resVis=false,revVis=false;
+const $=id=>document.getElementById(id);
+function hideAll(){['progWrap','quizWrap','resultsWrap','reviewWrap','addWrap'].forEach(id=>{const e=$(id);if(e)e.classList.add('hidden');});}
+function updateLangUI(){const b={pt:"🇧🇷 Português Brasileiro (with numbers 1-100)",es:"🇨🇺 Cuban Spanish (with numbers 1-100)",it:"🇮🇹 Italiano (with numbers 1-100)"};$('hdrBadge').innerText=b[currentLang];masterQ=shuffle([...BANKS[currentLang]]);}
+function startFresh(){masterQ=shuffle([...BANKS[currentLang]]);cIdx=0;score=0;wrongCt=0;history=[];resVis=false;revVis=false;hideAll();$('progWrap').classList.remove('hidden');$('quizWrap').classList.remove('hidden');$('addWrap').classList.remove('hidden');loadRound();}
+function loadRound(){roundQ=masterQ.slice(0,10);if(roundQ.length<5){masterQ=shuffle([...BANKS[currentLang]]);roundQ=masterQ.slice(0,10);}cIdx=0;history=[];renderQ();}
+function renderQ(){answered=false;const q=roundQ[cIdx];if(!q)return;const isN=!isNaN(parseInt(q.en));$('qNum').innerText=`Question ${String(cIdx+1).padStart(2,'0')}`;$('qEnglish').innerHTML=isN?`🔢 Number: <strong style="font-size:28px;color:var(--teal)">${q.en}</strong>`:q.en;$('qLabel').innerHTML=`Question ${cIdx+1} of ${roundQ.length}`;$('scoreLive').innerHTML=`✓ ${score} ✗ ${wrongCt}`;$('progFill').style.width=`${(cIdx/roundQ.length)*100}%`;const opts=shuffle([{txt:q.correct,ok:true},{txt:q.wrong[0],ok:false},{txt:q.wrong[1],ok:false}]);const wrap=$('optsWrap');wrap.innerHTML='';opts.forEach((o,i)=>{const b=document.createElement('button');b.className='opt-btn';b.innerHTML=`<span>${['A','B','C'][i]}</span><span>${o.txt}</span>`;b.onclick=()=>handleAns(o.txt,o.ok,q.correct,q.note,q.en);wrap.appendChild(b);});$('fbBox').style.display='none';$('btnNext').classList.remove('show');}
+function handleAns(chosen,ok,correct,note,en){if(answered)return;answered=true;history.push({en,chosen,correct,ok,note});if(ok)score++;else wrongCt++;document.querySelectorAll('.opt-btn').forEach(b=>{b.disabled=true;const s=b.querySelector('span:last-child');if(s&&s.innerText===chosen){b.classList.add(ok?'correct':'wrong');}if(s&&s.innerText===correct&&!ok)b.classList.add('reveal-c');});const fb=$('fbBox');fb.style.display='block';fb.className=`fb-box ${ok?'correct':'wrong'}`;fb.innerHTML=ok?`<strong>✓ Correct!</strong><div class="fb-note">💡 ${note}</div>`:`<strong>✗ Correct answer: ${correct}</strong><div class="fb-note">💡 ${note}</div>`;$('scoreLive').innerHTML=`✓ ${score} ✗ ${wrongCt}`;$('btnNext').classList.add('show');}
+function nextQ(){if(cIdx+1>=roundQ.length)showResults();else{cIdx++;renderQ();}}
+function showResults(){resVis=true;revVis=false;hideAll();$('resultsWrap').classList.remove('hidden');const tot=roundQ.length,cor=history.filter(h=>h.ok).length;$('resScore').innerHTML=`${cor}<span>/${tot}</span>`;let e="",m="";if(cor===tot){e="🏆";m="Perfeito! You mastered every phrase and number! 🌟";}else if(cor>=7){e="🎉";m="Great job! Keep practicing! 💪";}else{e="📖";m="Good effort! Review and try again! 📚";}$('resEmoji').innerText=e;$('resTitle').innerText=cor===tot?"Mastery!":"Nice Work!";$('resMsg').innerText=m;}
+function showReview(){revVis=true;resVis=false;hideAll();$('reviewWrap').classList.remove('hidden');const c=$('reviewList');c.innerHTML='';history.forEach((it,i)=>{const d=document.createElement('div');d.className=`rev-item ${it.ok?'rv-ok':'rv-no'}`;const isN=!isNaN(parseInt(it.en));d.innerHTML=`<div style="font-size:10px;color:var(--teal3);font-weight:700">Q${i+1}</div><div style="font-weight:700;margin:4px 0">${isN?`🔢 Number: ${it.en}`:it.en}</div><div style="margin:4px 0;${it.ok?'color:#86efac':'color:#fca5a5'}">${it.ok?'✓':'✗'} Your answer: ${it.chosen}</div>${!it.ok?`<div style="color:#86efac;font-size:13px">✅ Correct: ${it.correct}</div>`:''}<div style="font-size:11px;color:#aaa;font-style:italic;margin-top:5px">💡 ${it.note}</div>`;c.appendChild(d);});}
+function nextRound(){masterQ=shuffle([...BANKS[currentLang]]);startFresh();}
+function refreshRound(){score=0;wrongCt=0;cIdx=0;history=[];answered=false;hideAll();$('progWrap').classList.remove('hidden');$('quizWrap').classList.remove('hidden');$('addWrap').classList.remove('hidden');renderQ();}
+function toggleAdd(){$('addPanel').classList.toggle('open');}
+function addQ(){const en=$('newEn').value.trim(),correct=$('newCorrect').value.trim(),w1=$('newW1').value.trim(),w2=$('newW2').value.trim(),note=$('newNote').value.trim()||"New phrase!";if(!en||!correct||!w1||!w2){alert("Please fill all fields.");return;}BANKS[currentLang].push({en,correct,wrong:[w1,w2],note});$('newEn').value=$('newCorrect').value=$('newW1').value=$('newW2').value=$('newNote').value='';$('addPanel').classList.remove('open');alert(`✅ Added! Now ${BANKS[currentLang].length} questions.`);masterQ=shuffle([...BANKS[currentLang]]);}
+
+// ======================== MODE TOGGLE ========================
+function setMode(mode){
+  $('quizSections').classList.add('hidden');
+  $('dictSection').classList.add('hidden');
+  $('apiSection').classList.add('hidden');
+  ['modeQuizBtn','modeDictBtn','modeApiBtn'].forEach(id=>$(id).classList.remove('active'));
+  if(mode==='quiz'){
+    $('quizSections').classList.remove('hidden');
+    $('modeQuizBtn').classList.add('active');
+    if(revVis)showReview();
+    else if(resVis)showResults();
+    else{hideAll();$('progWrap').classList.remove('hidden');$('quizWrap').classList.remove('hidden');$('addWrap').classList.remove('hidden');if(!roundQ.length)loadRound();else renderQ();}
+  } else if(mode==='dict'){
+    $('dictSection').classList.remove('hidden');
+    $('modeDictBtn').classList.add('active');
+  } else {
+    $('apiSection').classList.remove('hidden');
+    $('modeApiBtn').classList.add('active');
+    apiRenderSaved();
+  }
+}
+
+// ======================== DICTIONARY TRANSLATOR UI ========================
+$('dictTranslateBtn').addEventListener('click',()=>{
+  const raw=$('dictSourceText').value.trim();
+  const from=$('fromLangDict').value,to=$('toLangDict').value;
+  if(!raw){alert("Please type something to translate.");return;}
+  $('dictResult').style.display='none';$('dictError').style.display='none';$('dictLoading').style.display='block';
+  setTimeout(()=>{
+    $('dictLoading').style.display='none';
+    const r=doDictTranslate(raw,from,to);
+    if(r){
+      $('dictResultText').innerText=r.text;
+      $('dictResultNote').innerHTML=`${LANG_FLAGS[from]} ${LANG_NAMES[from]} → ${LANG_FLAGS[to]} ${LANG_NAMES[to]}${r.note?' · 💡 '+r.note:''}`;
+      $('dictResult').style.display='block';
+    } else {
+      $('dictError').innerText=`"${raw}" not found in the dictionary. Try simpler words, or use the AI Translator tab for any phrase!`;
+      $('dictError').style.display='block';
+    }
+  },150);
+});
+$('swapDictBtn').addEventListener('click',()=>{
+  const f=$('fromLangDict'),t=$('toLangDict');
+  [f.value,t.value]=[t.value,f.value];
+  if($('dictResult').style.display==='block') $('dictTranslateBtn').click();
+});
+$('dictSourceText').addEventListener('keydown',e=>{if(e.ctrlKey&&e.key==='Enter')$('dictTranslateBtn').click();});
+
+// ======================== API TRANSLATOR ========================
+const API_LANG={
+  'English':'en','Brazilian Portuguese':'pt-BR','European Portuguese':'pt',
+  'Haitian Creole':'ht','Spanish':'es','Dominican Spanish':'es',
+  'French':'fr','German':'de','Italian':'it','Russian':'ru',
+  'Japanese':'ja','Korean':'ko','Chinese Simplified':'zh-CN',
+  'Arabic':'ar','Hindi':'hi','Turkish':'tr','Polish':'pl',
+  'Dutch':'nl','Vietnamese':'vi','Thai':'th','Indonesian':'id'
+};
+const VOICE_LANG={
+  'English':'en-US','Brazilian Portuguese':'pt-BR','European Portuguese':'pt-PT',
+  'Haitian Creole':'fr-FR','Spanish':'es-ES','Dominican Spanish':'es-US',
+  'French':'fr-FR','German':'de-DE','Italian':'it-IT','Russian':'ru-RU',
+  'Japanese':'ja-JP','Korean':'ko-KR','Chinese Simplified':'zh-CN',
+  'Arabic':'ar-SA','Hindi':'hi-IN','Turkish':'tr-TR','Polish':'pl-PL',
+  'Dutch':'nl-NL','Vietnamese':'vi-VN','Thai':'th-TH','Indonesian':'id-ID'
+};
+const API_STORE='wsTranslations_v3';
+function apiCode(l){return API_LANG[l]||l.substring(0,2).toLowerCase();}
+function apiGetCache(){try{return JSON.parse(localStorage.getItem(API_STORE))||{};}catch(e){return {};}}
+function apiSaveCache(c){try{localStorage.setItem(API_STORE,JSON.stringify(c));}catch(e){}}
+function apiCacheKey(f,t,txt){return `${f}|${t}|${txt.trim().toLowerCase()}`;}
+function apiLookup(f,t,txt){return apiGetCache()[apiCacheKey(f,t,txt)]||null;}
+function apiStore(f,t,txt,result){const c=apiGetCache();c[apiCacheKey(f,t,txt)]={result,from:f,to:t,text:txt,ts:Date.now()};apiSaveCache(c);apiRenderSaved();}
+
+function apiRenderSaved(){
+  const items=Object.values(apiGetCache()).sort((a,b)=>(b.ts||0)-(a.ts||0));
+  window._apiSaved=items;
+  const sl=$('apiSavedList');
+  if(!items.length){sl.innerHTML='<div class="api-no-saved">Translate something online and it saves here for offline use automatically.</div>';return;}
+  function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+  sl.innerHTML=items.slice(0,15).map((it,i)=>`<div class="api-saved-item" onclick="apiLoadSaved(${i})"><div class="src">${esc(it.from)} → ${esc(it.to)} | ${esc(it.text.substring(0,50))}${it.text.length>50?'…':''}</div><div class="tgt">${esc(it.result.substring(0,80))}${it.result.length>80?'…':''}</div></div>`).join('');
+}
+window.apiLoadSaved=function(i){
+  const it=(window._apiSaved||[])[i];if(!it)return;
+  $('apiFromLang').value=it.from;$('apiToLang').value=it.to;
+  $('apiInputText').value=it.text;$('apiCharCount').textContent=`${it.text.length} / 500`;
+  apiShowResult(it.result,true);
+};
+function apiShowResult(text,fromCache){
+  $('apiResultText').textContent=text;
+  $('apiCopyBtn').disabled=$('apiSpeakBtn').disabled=false;
+  $('apiCachedBanner').classList.toggle('show',fromCache);
+  $('apiResultText').scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+async function apiTranslate(){
+  const text=$('apiInputText').value.trim();if(!text)return;
+  const from=$('apiFromLang').value,to=$('apiToLang').value;
+  if(from===to){apiShowResult(text,false);return;}
+  $('apiCachedBanner').classList.remove('show');
+  const cached=apiLookup(from,to,text);
+  if(cached){apiShowResult(cached.result,true);return;}
+  $('apiTranslateBtn').classList.add('loading');$('apiTranslateBtn').disabled=true;
+  $('apiResultText').innerHTML='<span class="api-placeholder">Translating…</span>';
+  $('apiCopyBtn').disabled=$('apiSpeakBtn').disabled=true;
+  try{
+    const res=await fetch('/.netlify/functions/translate',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({from,to,text})
+    });
+    if(!res.ok){
+      let msg=`HTTP ${res.status}`;
+      try{const errData=await res.json();if(errData.error)msg=errData.error;}catch(e){}
+      throw new Error(msg);
+    }
+    const data=await res.json();
+    const result=data.result?.trim();
+    if(!result)throw new Error('No translation returned');
+    apiStore(from,to,text,result);
+    apiShowResult(result,false);
+  }catch(err){
+    $('apiResultText').innerHTML=`<span class="api-error">❌ Translation failed (${err.message}). Please try again.</span>`;
+    $('apiCopyBtn').disabled=$('apiSpeakBtn').disabled=true;
+  }finally{
+    $('apiTranslateBtn').classList.remove('loading');$('apiTranslateBtn').disabled=false;
+  }
+}
+
+// Speak
+let apiVoices=[];
+function apiLoadVoices(){apiVoices=window.speechSynthesis?.getVoices()||[];}
+apiLoadVoices();
+if(window.speechSynthesis)window.speechSynthesis.onvoiceschanged=apiLoadVoices;
+function apiBestVoice(code){if(!apiVoices.length)apiLoadVoices();const p=code.split('-')[0].toLowerCase();return apiVoices.find(v=>v.lang.toLowerCase()===code.toLowerCase())||apiVoices.find(v=>v.lang.toLowerCase().startsWith(p))||null;}
+
+$('apiSpeakBtn').addEventListener('click',()=>{
+  const text=$('apiResultText').textContent.trim();
+  if(!text||$('apiResultText').querySelector('.api-placeholder,.api-error'))return;
+  if(!window.speechSynthesis){alert('Text-to-speech not supported in this browser.');return;}
+  if($('apiSpeakBtn').classList.contains('speaking')){window.speechSynthesis.cancel();$('apiSpeakBtn').classList.remove('speaking');$('apiSpeakBtn').innerHTML='🔊 Listen';return;}
+  window.speechSynthesis.cancel();
+  const code=VOICE_LANG[$('apiToLang').value]||'pt-BR';
+  const utt=new SpeechSynthesisUtterance(text);
+  utt.lang=code;utt.rate=0.88;utt.pitch=1;utt.volume=1;
+  const v=apiBestVoice(code);if(v)utt.voice=v;
+  utt.onstart=()=>{$('apiSpeakBtn').classList.add('speaking');$('apiSpeakBtn').innerHTML='⏹ Stop';};
+  utt.onend=utt.onerror=()=>{$('apiSpeakBtn').classList.remove('speaking');$('apiSpeakBtn').innerHTML='🔊 Listen';};
+  setTimeout(()=>window.speechSynthesis.speak(utt),80);
+});
+
+$('apiCopyBtn').addEventListener('click',()=>{
+  const t=$('apiResultText').textContent;
+  const done=()=>{$('apiCopyBtn').textContent='✅ Copied!';setTimeout(()=>$('apiCopyBtn').textContent='Copy',2000);};
+  if(navigator.clipboard)navigator.clipboard.writeText(t).then(done).catch(()=>{});else{const ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);done();}
+});
+
+$('apiTranslateBtn').addEventListener('click',()=>apiTranslate());
+$('apiInputText').addEventListener('keydown',e=>{if(e.key==='Enter'&&(e.ctrlKey||e.metaKey))apiTranslate();});
+$('apiInputText').addEventListener('input',()=>{$('apiCharCount').textContent=`${$('apiInputText').value.length} / 500`;});
+$('apiSwapBtn').addEventListener('click',()=>{
+  const f=$('apiFromLang'),t=$('apiToLang');[f.value,t.value]=[t.value,f.value];
+  if($('apiInputText').value.trim())apiTranslate();
+});
+$('apiClearBtn').addEventListener('click',()=>{
+  if(!confirm('Clear all saved translations?'))return;
+  localStorage.removeItem(API_STORE);apiRenderSaved();
+  $('apiResultText').innerHTML='<span class="api-placeholder">Translation will appear here…</span>';
+  $('apiCopyBtn').disabled=$('apiSpeakBtn').disabled=true;
+});
+function apiUpdateOnline(){$('apiOfflineBanner').classList.toggle('show',!navigator.onLine);}
+window.addEventListener('online',apiUpdateOnline);window.addEventListener('offline',apiUpdateOnline);apiUpdateOnline();
+
+// ======================== MY LESSONS (FOOTER) ========================
+const LESSONS_KEY = 'wsMyLessons_v1';
+const LESSON_LANG_LABELS = {pt:'🇧🇷 Brazilian Portuguese',es:'🇨🇺 Cuban Spanish',it:'🇮🇹 Italian',fr:'🇫🇷 French'};
+const LESSON_LANG_FLAGS  = {pt:'🇧🇷',es:'🇨🇺',it:'🇮🇹',fr:'🇫🇷'};
+
+function lessonGetAll(){try{return JSON.parse(localStorage.getItem(LESSONS_KEY))||[];}catch(e){return[];}}
+function lessonSaveAll(arr){try{localStorage.setItem(LESSONS_KEY,JSON.stringify(arr));}catch(e){}}
+
+function lessonRender(){
+  const lessons=lessonGetAll();
+  const container=$('lessonSavedList');
+  if(!lessons.length){container.innerHTML='<div class="lesson-empty">Your saved lessons will appear here.</div>';return;}
+  const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  container.innerHTML=`<div class="lesson-saved-title">
+    📚 Your Lessons (${lessons.length})
+    <button class="lesson-clear-btn" onclick="lessonClearAll()">Clear all</button>
+  </div>`+lessons.slice().reverse().map((l,ri)=>{
+    const i=lessons.length-1-ri;
+    return `<div class="lesson-item">
+      <div class="lesson-item-text">
+        <div class="lesson-item-en">${esc(l.en)}</div>
+        <div class="lesson-item-trans">${LESSON_LANG_FLAGS[l.lang]||'🌐'} ${esc(l.trans)}</div>
+        ${l.note?`<div class="lesson-item-flag">💡 ${esc(l.note)}</div>`:''}
+      </div>
+      <button class="lesson-item-del" onclick="lessonDelete(${i})" title="Delete">✕</button>
+    </div>`;
+  }).join('');
+}
+
+window.lessonDelete=function(i){
+  const arr=lessonGetAll();arr.splice(i,1);lessonSaveAll(arr);lessonRender();
+  // Rebuild quiz banks without this lesson
+  rebuildBanksFromLessons();
+};
+window.lessonClearAll=function(){
+  if(!confirm('Clear all your saved lessons?'))return;
+  lessonSaveAll([]);lessonRender();rebuildBanksFromLessons();
+};
+
+function rebuildBanksFromLessons(){
+  if(typeof BANKS==='undefined'||typeof shuffle==='undefined')return;
+  // Strip out any previously injected lesson entries first
+  ['pt','es','it','fr'].forEach(lang=>{
+    if(BANKS[lang])BANKS[lang]=BANKS[lang].filter(q=>!q._myLesson);
+  });
+  // Collect all wrong-answer candidates across ALL languages as a fallback pool
+  const globalFallback=Object.values(BANKS).flat().map(q=>q.correct).filter(Boolean);
+  lessonGetAll().forEach(l=>{
+    if(!BANKS[l.lang])return;
+    // Prefer wrong answers from the same language bank
+    let pool=BANKS[l.lang].filter(q=>q.correct&&q.correct!==l.trans).map(q=>q.correct);
+    // If not enough, pad from global fallback (other languages)
+    if(pool.length<2){
+      const extra=globalFallback.filter(c=>c!==l.trans&&!pool.includes(c));
+      pool=[...pool,...extra];
+    }
+    // Always produce 2 wrong answers — guaranteed as long as any bank has entries
+    const wrongs=shuffle(pool).slice(0,2);
+    if(wrongs.length<2)return; // truly empty app — skip
+    BANKS[l.lang].push({en:l.en,correct:l.trans,wrong:wrongs,note:l.note||'Your custom lesson!',_myLesson:true});
+  });
+  if(typeof masterQ!=='undefined'&&typeof currentLang!=='undefined')
+    masterQ=shuffle([...BANKS[currentLang]]);
+}
+
+// Update label when language changes
+$('lessonLangSelect').addEventListener('change',()=>{
+  const lang=$('lessonLangSelect').value;
+  $('lessonTransLabel').textContent=LESSON_LANG_LABELS[lang]+' translation';
+});
+
+// Toggle panel
+$('lessonToggleBtn').addEventListener('click',()=>{
+  $('lessonPanel').classList.toggle('open');
+  $('lessonChevron').classList.toggle('open');
+});
+
+// Save button
+$('lessonSaveBtn').addEventListener('click',()=>{
+  const en=$('lessonEnInput').value.trim();
+  const trans=$('lessonTransInput').value.trim();
+  const note=$('lessonNoteInput').value.trim();
+  const lang=$('lessonLangSelect').value;
+  if(!en||!trans){alert('Please fill in both the English sentence and its translation.');return;}
+  const arr=lessonGetAll();
+  arr.push({en,trans,note,lang,ts:Date.now()});
+  lessonSaveAll(arr);
+  // Clear fields
+  $('lessonEnInput').value=$('lessonTransInput').value=$('lessonNoteInput').value='';
+  // Rebuild quiz banks + refresh active round so lesson appears immediately
+  rebuildBanksFromLessons();
+  masterQ=shuffle([...BANKS[currentLang]]);
+  // Show success
+  const suc=$('lessonSuccess');suc.classList.add('show');setTimeout(()=>suc.classList.remove('show'),3000);
+  lessonRender();
+});
+
+// Init: load saved lessons into banks on startup — called at bottom after BANKS is defined
+lessonRender();
+
+// ======================== MAIN EVENT LISTENERS ========================
+document.querySelectorAll('.lang-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    const lang=btn.getAttribute('data-lang');if(!lang)return;
+    currentLang=lang;document.querySelectorAll('.lang-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');
+    updateLangUI();startFresh();setMode('quiz');
+  });
+});
+$('modeQuizBtn').addEventListener('click',()=>setMode('quiz'));
+$('modeDictBtn').addEventListener('click',()=>setMode('dict'));
+$('modeApiBtn').addEventListener('click',()=>setMode('api'));
+$('btnNext').addEventListener('click',()=>nextQ());
+$('reviewBtn').addEventListener('click',()=>showReview());
+$('moreQuestionsBtn').addEventListener('click',()=>nextRound());
+$('retakeBtn').addEventListener('click',()=>refreshRound());
+$('backToResultsBtn').addEventListener('click',()=>showResults());
+$('moreFromReviewBtn').addEventListener('click',()=>nextRound());
+$('addToggleBtn').addEventListener('click',()=>toggleAdd());
+$('addQBtn').addEventListener('click',()=>addQ());
+
+// ======================== SCREEN LOCK ========================
+(function(){
+  let tapCount=0,tapTimer=null;
+  const icon=document.getElementById('lockIcon');
+  const passWrap=document.getElementById('lockPassWrap');
+  const passInput=document.getElementById('lockPassInput');
+  const errMsg=document.getElementById('lockErr');
+  const lockScreen=document.getElementById('lockScreen');
+  const CORRECT='333777';
+
+  icon.addEventListener('click',()=>{
+    tapCount++;
+    clearTimeout(tapTimer);
+    tapTimer=setTimeout(()=>{tapCount=0;},1200);
+    if(tapCount>=7){
+      tapCount=0;
+      passWrap.classList.add('show');
+      passInput.focus();
+    }
+  });
+
+  function checkPass(){
+    if(passInput.value===CORRECT){
+      lockScreen.classList.add('hidden');
+      try{sessionStorage.setItem('wsUnlocked','1');}catch(e){}
+    } else {
+      errMsg.classList.add('show');
+      passInput.value='';
+      setTimeout(()=>errMsg.classList.remove('show'),1500);
+    }
+  }
+  passInput.addEventListener('input',()=>{
+    if(passInput.value.length===CORRECT.length)checkPass();
+  });
+
+  try{
+    if(sessionStorage.getItem('wsUnlocked')==='1')lockScreen.classList.add('hidden');
+  }catch(e){}
+})();
+
+// ======================== INIT ========================
+updateLangUI();
+rebuildBanksFromLessons();
+startFresh();
+apiRenderSaved();
+</script>
+</body>
+</html>
